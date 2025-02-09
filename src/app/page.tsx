@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { type File, Folder, mockFiles, mockFolders } from "../lib/mock-data";
 import { Breadcrumb } from "./components/breadcrumb";
-import { FileList } from "./components/file-list";
+import { FileList, FolderList } from "./components/file-list";
 import { UploadButton } from "./components/upload-button";
 import { get } from "http";
 
@@ -17,6 +17,15 @@ export default function DrivePage() {
   const getCurrentFiles = () => {
     let files: File[] = [];
     mockFiles.forEach((file) => {
+      if (file.parentId === currentFolder) {
+        files.push(file);
+      }
+    });
+    return files;
+  };
+  const getCurrentFolders = () => {
+    let files: Folder[] = [];
+    mockFolders.forEach((file) => {
       if (file.parentId === currentFolder) {
         files.push(file);
       }
@@ -57,6 +66,9 @@ export default function DrivePage() {
         </div>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {getCurrentFolders()?.map((folder) => (
+            <FolderList folder={folder} onFolderClick={() => {}} />
+          ))}
           {getCurrentFiles()?.map((file) => (
             <FileList file={file} onFileClick={() => {}} />
           ))}
