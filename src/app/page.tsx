@@ -1,22 +1,38 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { type FileItem, mockFiles } from "../lib/mock-data";
+import { type File, Folder, mockFiles, mockFolders } from "../lib/mock-data";
 import { Breadcrumb } from "./components/breadcrumb";
 import { FileList } from "./components/file-list";
 import { UploadButton } from "./components/upload-button";
+import { get } from "http";
 
 export default function DrivePage() {
-  const [currentFolder, setCurrentFolder] = useState<string>("1");
-  const [breadcrumbs, setBreadcrumbs] = useState<FileItem[]>(
-    mockFiles.length > 0 && mockFiles[0] ? [mockFiles[0]] : [],
+  const [currentFolder, setCurrentFolder] = useState<string>("root");
+
+  const getCurrentFolder = () => {
+    return mockFolders.find((folder) => folder.id === currentFolder);
+  };
+
+  const getCurrentFiles = () => {
+    let files: File[] = [];
+    mockFiles.forEach((file) => {
+      if (file.parentId === currentFolder) {
+        files.push(file);
+      }
+    });
+    return files;
+  };
+
+  const [breadcrumbs, setBreadcrumbs] = useState<Folder[]>(
+    mockFolders.length > 0 && mockFolders[0] ? [mockFolders[0]] : [],
   );
 
   useEffect(() => {
     document.documentElement.classList.add("dark");
   }, []);
 
-  const handleFolderClick = (folder: FileItem) => {
+  const handleFolderClick = (folder: Folder) => {
     if (!folder) return;
     setCurrentFolder(folder.id);
     setBreadcrumbs((prev) => [...prev, folder]);
@@ -39,10 +55,12 @@ export default function DrivePage() {
           <Breadcrumb items={breadcrumbs} onItemClick={handleBreadcrumbClick} />
           <UploadButton />
         </div>
-        <FileList
-          files={mockFiles.filter((file) => file?.parentId === currentFolder)}
-          onFolderClick={handleFolderClick}
-        />
+
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {getCurrentFiles()?.map((file) => (
+            <FileList file={file} onFileClick={() => {}} />
+          ))}
+        </div>
       </div>
     </div>
   );
