@@ -15,7 +15,7 @@ export default function DrivePage() {
   };
 
   const getCurrentFiles = () => {
-    let files: File[] = [];
+    const files: File[] = [];
     mockFiles.forEach((file) => {
       if (file.parentId === currentFolder) {
         files.push(file);
@@ -24,13 +24,13 @@ export default function DrivePage() {
     return files;
   };
   const getCurrentFolders = () => {
-    let files: Folder[] = [];
-    mockFolders.forEach((file) => {
-      if (file.parentId === currentFolder) {
-        files.push(file);
+    const folders: Folder[] = [];
+    mockFolders.forEach((folder) => {
+      if (folder.parentId === currentFolder) {
+        folders.push(folder);
       }
     });
-    return files;
+    return folders;
   };
 
   const [breadcrumbs, setBreadcrumbs] = useState<Folder[]>(
@@ -67,10 +67,14 @@ export default function DrivePage() {
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {getCurrentFolders()?.map((folder) => (
-            <FolderList folder={folder} onFolderClick={handleFolderClick} />
+            <FolderList
+              folder={folder}
+              onFolderClick={handleFolderClick}
+              key={folder.id}
+            />
           ))}
           {getCurrentFiles()?.map((file) => (
-            <FileList file={file} onFileClick={() => {}} />
+            <FileList file={file} key={file.id} />
           ))}
         </div>
       </div>

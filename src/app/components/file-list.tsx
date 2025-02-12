@@ -3,7 +3,7 @@ import type { File as FileItem, Folder as FolderItem } from "../../lib/mock-data
 
 interface FileListProps {
   file: FileItem;
-  onFileClick: (file: FileItem) => void;
+  onFileClick?: (file: FileItem) => void;
 }
 
 export function FileList({ file, onFileClick }: FileListProps) {
