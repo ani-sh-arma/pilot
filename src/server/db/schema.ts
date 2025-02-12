@@ -10,10 +10,12 @@ export const createTable = singlestoreTableCreator((name) => `pilot_${name}`);
 export const files = createTable(
   "files_table",
   {
-    id: bigint("id", { mode: "bigint" }).primaryKey().autoincrement(),
+    id: bigint("id", { mode: "bigint", unsigned: true })
+      .primaryKey()
+      .autoincrement(),
     name: text("name"),
     type: text("type"),
-    parentId: bigint("parent_id", { mode: "bigint" }).notNull(),
+    parentId: bigint("parent_id", { mode: "bigint", unsigned: true }).notNull(),
     url: text("url"),
     size: text("size"),
   },
@@ -25,9 +27,11 @@ export const files = createTable(
 export const folders = createTable(
   "folders_table",
   {
-    id: bigint("id", { mode: "bigint" }).primaryKey().autoincrement(),
+    id: bigint("id", { mode: "bigint", unsigned: true })
+      .primaryKey()
+      .autoincrement(),
     name: text("name").notNull(),
-    parentId: bigint("parent_id", { mode: "bigint" }),
+    parentId: bigint("parent_id", { mode: "bigint", unsigned: true }),
   },
   (t) => {
     return [index("parent_index").on(t.parentId)];
