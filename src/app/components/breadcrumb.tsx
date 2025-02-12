@@ -1,8 +1,8 @@
 import { ChevronRight } from "lucide-react"
-import type { FileItem } from "../../lib/mock-data"
+import type { Folder } from "../../lib/mock-data"
 
 interface BreadcrumbProps {
-  items: FileItem[]
+  items: Folder[]
   onItemClick: (index: number) => void
 }
 
