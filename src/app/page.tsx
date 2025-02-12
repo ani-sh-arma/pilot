@@ -67,7 +67,7 @@ export default function DrivePage() {
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {getCurrentFolders()?.map((folder) => (
-            <FolderList folder={folder} onFolderClick={() => {}} />
+            <FolderList folder={folder} onFolderClick={handleFolderClick} />
           ))}
           {getCurrentFiles()?.map((file) => (
             <FileList file={file} onFileClick={() => {}} />
