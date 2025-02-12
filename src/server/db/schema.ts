@@ -1,12 +1,13 @@
 import {
-  int,
   text,
-  singlestoreTable,
   bigint,
   index,
+  singlestoreTableCreator,
 } from "drizzle-orm/singlestore-core";
 
-export const files = singlestoreTable(
+export const createTable = singlestoreTableCreator((name) => `pilot_${name}`);
+
+export const files = createTable(
   "files_table",
   {
     id: bigint("id", { mode: "bigint" }).primaryKey().autoincrement(),
@@ -21,7 +22,7 @@ export const files = singlestoreTable(
   },
 );
 
-export const folders = singlestoreTable(
+export const folders = createTable(
   "folders_table",
   {
     id: bigint("id", { mode: "bigint" }).primaryKey().autoincrement(),

@@ -12,9 +12,23 @@ jobs:
       - name: Install Dependencies
         run: npm install -g pnpm && pnpm install
 
+      # 🔹 Set environment variables from GitHub Secrets
+      - name: Set up environment variables
+        run: |
+          echo "SINGLESTORE_HOST=${{ secrets.SINGLESTORE_HOST }}" >> $GITHUB_ENV
+          echo "SINGLESTORE_PORT=${{ secrets.SINGLESTORE_PORT }}" >> $GITHUB_ENV
+          echo "SINGLESTORE_USER=${{ secrets.SINGLESTORE_USER }}" >> $GITHUB_ENV
+          echo "SINGLESTORE_PASS=${{ secrets.SINGLESTORE_PASS }}" >> $GITHUB_ENV
+          echo "SINGLESTORE_DB_NAME=${{ secrets.SINGLESTORE_DB_NAME }}" >> $GITHUB_ENV
+          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> $GITHUB_ENV
+
       - name: Copy .env.example files
         shell: bash
         run: find . -name ".env.example" -execdir sh -c 'cp "$0" "${0%.example}"' {} \;
+
+      # 🔹 Debug: Print env variables (REMOVE THIS LATER)
+      - name: Debug Environment Variables
+        run: env | grep SINGLESTORE || true
 
       - name: Typecheck
         run: pnpm typecheck
