@@ -1,7 +1,7 @@
 import { db } from "~/server/db";
 import {
-  files as fileSchema,
-  folders as folderSchema,
+  file_table as fileSchema,
+  folder_table as folderSchema,
 } from "~/server/db/schema";
 import PilotContents from "./../../pilot-contents";
 import { eq } from "drizzle-orm";
@@ -21,7 +21,7 @@ async function getAllParents(folderId: bigint) {
     if (!folder[0]) {
       throw new Error("Invalid folder id");
     }
-    parents.push(folder[0]);
+    parents.unshift(folder[0]);
     currentId = folder[0]?.parentId;
   }
 

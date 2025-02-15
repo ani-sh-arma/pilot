@@ -4,12 +4,12 @@ import { useState, useEffect } from "react";
 import { Breadcrumb } from "./components/breadcrumb";
 import { FileList, FolderList } from "./components/file-list";
 import { UploadButton } from "./components/upload-button";
-import type { files, folders } from "~/server/db/schema";
+import type { file_table, folder_table } from "~/server/db/schema";
 
 export default function PilotContents(props: {
-  files: (typeof files.$inferSelect)[];
-  folders: (typeof folders.$inferSelect)[];
-  parents: (typeof folders.$inferSelect)[];
+  files: (typeof file_table.$inferSelect)[];
+  folders: (typeof folder_table.$inferSelect)[];
+  parents: (typeof folder_table.$inferSelect)[];
 }) {
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100">

@@ -1,11 +1,11 @@
 import { File, Folder, Image, Video } from "lucide-react";
 import type { File as FileItem } from "../../lib/mock-data";
-import type { files, folders } from "~/server/db/schema";
+import type { file_table, folder_table } from "~/server/db/schema";
 import Link from "next/link";
 
 interface FileListProps {
-  file: typeof files.$inferSelect;
-  onFileClick?: (file: typeof files.$inferSelect) => void;
+  file: typeof file_table.$inferSelect;
+  onFileClick?: (file: typeof file_table.$inferSelect) => void;
 }
 
 export function FileList({ file, onFileClick }: FileListProps) {
@@ -50,7 +50,7 @@ export function FileList({ file, onFileClick }: FileListProps) {
 }
 
 interface FolderListProps {
-  folder: typeof folders.$inferSelect;
+  folder: typeof folder_table.$inferSelect;
 }
 
 export function FolderList({ folder }: FolderListProps) {

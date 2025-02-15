@@ -1,9 +1,9 @@
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { folders } from "~/server/db/schema";
+import { folder_table } from "~/server/db/schema";
 
 interface BreadcrumbProps {
-  items: (typeof folders.$inferSelect)[];
+  items: (typeof folder_table.$inferSelect)[];
 }
 
 export function Breadcrumb({ items }: BreadcrumbProps) {

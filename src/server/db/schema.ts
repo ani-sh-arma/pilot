@@ -9,7 +9,7 @@ import {
 
 export const createTable = singlestoreTableCreator((name) => `pilot_${name}`);
 
-export const files = createTable(
+export const file_table = createTable(
   "files_table",
   {
     id: bigint("id", { mode: "bigint", unsigned: true })
@@ -26,7 +26,7 @@ export const files = createTable(
   },
 );
 
-export const folders = createTable(
+export const folder_table = createTable(
   "folders_table",
   {
     id: bigint("id", { mode: "bigint", unsigned: true })
