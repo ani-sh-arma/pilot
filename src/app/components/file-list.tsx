@@ -1,7 +1,6 @@
 import { File, Folder, Image, Video } from "lucide-react";
 import type {
   File as FileItem,
-  Folder as FolderItem,
 } from "../../lib/mock-data";
 import type { files, folders } from "~/server/db/schema";
 

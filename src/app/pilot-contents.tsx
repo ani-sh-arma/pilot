@@ -10,7 +10,7 @@ export default function PilotContents(props: {
   files: (typeof files.$inferSelect)[];
   folders: (typeof folders.$inferSelect)[];
 }) {
-  const [currentFolder, setCurrentFolder] = useState<BigInt>(BigInt(1));
+  const [currentFolder, setCurrentFolder] = useState<bigint>(BigInt(1));
 
   const getCurrentFolder = () => {
     return props.folders.find((folder) => folder.id === currentFolder);
