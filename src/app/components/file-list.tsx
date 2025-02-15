@@ -1,8 +1,7 @@
 import { File, Folder, Image, Video } from "lucide-react";
-import type {
-  File as FileItem,
-} from "../../lib/mock-data";
+import type { File as FileItem } from "../../lib/mock-data";
 import type { files, folders } from "~/server/db/schema";
+import Link from "next/link";
 
 interface FileListProps {
   file: typeof files.$inferSelect;
@@ -52,10 +51,9 @@ export function FileList({ file, onFileClick }: FileListProps) {
 
 interface FolderListProps {
   folder: typeof folders.$inferSelect;
-  onFolderClick: (folder: typeof folders.$inferSelect) => void;
 }
 
-export function FolderList({ folder, onFolderClick }: FolderListProps) {
+export function FolderList({ folder }: FolderListProps) {
   return (
     <div
       key={folder.id}
@@ -64,12 +62,12 @@ export function FolderList({ folder, onFolderClick }: FolderListProps) {
       <Folder className="h-6 w-6 text-yellow-400" />
       <div className="ml-4 flex-grow">
         {
-          <button
-            onClick={() => onFolderClick(folder)}
+          <Link
+            href={`/f/${folder.id}`}
             className="text-lg font-medium text-gray-100 hover:text-blue-400"
           >
             {folder.name}
-          </button>
+          </Link>
         }
       </div>
     </div>

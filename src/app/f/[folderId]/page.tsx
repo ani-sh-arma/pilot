@@ -6,6 +6,28 @@ import {
 import PilotContents from "./../../pilot-contents";
 import { eq } from "drizzle-orm";
 
+async function getAllParents(folderId: bigint) {
+  const parents = [];
+  let currentId: bigint | null = folderId;
+  while (currentId !== BigInt(1)) {
+    if (currentId === null) {
+      throw new Error("Invalid folder id");
+    }
+    const folder = await db
+      .selectDistinct()
+      .from(folderSchema)
+      .where(eq(folderSchema.id, currentId));
+
+    if (!folder[0]) {
+      throw new Error("Invalid folder id");
+    }
+    parents.push(folder[0]);
+    currentId = folder[0]?.parentId;
+  }
+
+  return parents;
+}
+
 export default async function Pilot(props: {
   params: Promise<{ folderId: string }>;
 }) {
@@ -19,17 +41,23 @@ export default async function Pilot(props: {
     );
   }
 
-  console.log(safeFolderId);
-
-  const files = await db
+  const filesPromise = db
     .select()
     .from(fileSchema)
     .where(eq(fileSchema.parentId, BigInt(safeFolderId)));
 
-  const folders = await db
+  const foldersPromise = db
     .select()
     .from(folderSchema)
     .where(eq(folderSchema.parentId, BigInt(safeFolderId)));
 
-  return <PilotContents files={files} folders={folders} />;
+  const parentPromise = getAllParents(BigInt(safeFolderId));
+
+  const [folders, files, parents] = await Promise.all([
+    foldersPromise,
+    filesPromise,
+    parentPromise,
+  ]);
+
+  return <PilotContents files={files} folders={folders} parents={parents} />;
 }
