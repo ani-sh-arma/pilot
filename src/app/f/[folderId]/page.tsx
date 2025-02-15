@@ -1,9 +1,5 @@
 import PilotContents from "./../../pilot-contents";
-import {
-  getAllParentsForFolder,
-  getFiles,
-  getFolders,
-} from "~/server/db/queries";
+import { Queries } from "~/server/db/queries";
 
 export default async function Pilot(props: {
   params: Promise<{ folderId: string }>;
@@ -18,9 +14,9 @@ export default async function Pilot(props: {
     );
   }
 
-  const filesPromise = getFiles(BigInt(safeFolderId));
-  const foldersPromise = getFolders(BigInt(safeFolderId));
-  const parentPromise = getAllParentsForFolder(BigInt(safeFolderId));
+  const filesPromise = Queries.getFiles(BigInt(safeFolderId));
+  const foldersPromise = Queries.getFolders(BigInt(safeFolderId));
+  const parentPromise = Queries.getAllParentsForFolder(BigInt(safeFolderId));
 
   const [folders, files, parents] = await Promise.all([
     foldersPromise,
