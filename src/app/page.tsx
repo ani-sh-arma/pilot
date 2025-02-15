@@ -1,13 +1,12 @@
-import { db } from "~/server/db";
-import {
-  files as fileSchema,
-  folders as folderSchema,
-} from "~/server/db/schema";
-import PilotContents from "./pilot-contents";
-
-export default async function Pilot() {
-  const files = await db.select().from(fileSchema);
-  const folders = await db.select().from(folderSchema);
-
-  return <PilotContents files={files} folders={folders} />;
+export default function Pilot() {
+  return (
+    <div className="justify-cente flex h-screen flex-col items-center gap-4 bg-gray-900">
+      <center>
+        <h2 className="color-white text-2xl font-bold text-cyan-50">
+          Welcome to{" "}
+        </h2>
+        <h1 className="text-4xl font-bold text-cyan-50">Pilot Store</h1>
+      </center>
+    </div>
+  );
 }
