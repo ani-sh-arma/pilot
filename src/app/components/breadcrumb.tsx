@@ -1,8 +1,8 @@
 import { ChevronRight } from "lucide-react"
-import type { Folder } from "../../lib/mock-data"
+import { folders } from "~/server/db/schema";
 
 interface BreadcrumbProps {
-  items: Folder[]
+  items: (typeof folders.$inferSelect)[];
   onItemClick: (index: number) => void
 }
 
