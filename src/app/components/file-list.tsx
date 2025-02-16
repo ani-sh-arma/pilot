@@ -2,14 +2,12 @@ import { File, Folder, Image, Video } from "lucide-react";
 import type { File as FileItem } from "../../lib/mock-data";
 import type { file_table, folder_table } from "~/server/db/schema";
 import Link from "next/link";
-import { double } from "drizzle-orm/mysql-core";
 
 interface FileListProps {
   file: typeof file_table.$inferSelect;
-  onFileClick?: (file: typeof file_table.$inferSelect) => void;
 }
 
-export function FileList({ file, onFileClick }: FileListProps) {
+export function FileList({ file}: FileListProps) {
   const getIcon = (type: FileItem["type"]) => {
     switch (type) {
       case "doc":

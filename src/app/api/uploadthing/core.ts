@@ -26,16 +26,17 @@ export const ourFileRouter = {
       const user = await auth();
 
       // If you throw, the user will not be able to upload
+      // eslint-disable-next-line @typescript-eslint/only-throw-error
       if (!user.userId) throw new UploadThingError("Unauthorized");
 
       const folder = await Queries.getFolderById(BigInt(input.folderId));
 
-      if (!folder) {
-        throw new UploadThingError("Invalid folder id");
-      }
-      if (folder[0]?.ownerId !== user.userId) {
+      // eslint-disable-next-line @typescript-eslint/only-throw-error
+      if (!folder) throw new UploadThingError("Invalid folder id");
+
+      // eslint-disable-next-line @typescript-eslint/only-throw-error
+      if (folder[0]?.ownerId !== user.userId)
         throw new UploadThingError("Unauthorized");
-      }
 
       // Whatever is returned here is accessible in onUploadComplete as `metadata`
       return { userId: user.userId, parentId: input.folderId };
@@ -46,7 +47,7 @@ export const ourFileRouter = {
 
       console.log("file url", file.ufsUrl);
 
-      Mutations.createFile({
+      await Mutations.createFile({
         file: {
           name: file.name,
           type: file.type,
