@@ -23,7 +23,7 @@ export default function PilotContents(props: {
           <div className="flex flex-row gap-5">
             <div className="flex items-center gap-2">
               <UploadButton
-                endpoint={"imageUploader"}
+                endpoint={"pilotUploader"}
                 onClientUploadComplete={() => {
                   navigate.refresh();
                 }}
