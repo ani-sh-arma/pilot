@@ -5,6 +5,7 @@ import { Breadcrumb } from "./components/breadcrumb";
 import { FileList, FolderList } from "./components/file-list";
 import { UploadButton } from "./components/upload-button";
 import type { file_table, folder_table } from "~/server/db/schema";
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 
 export default function PilotContents(props: {
   files: (typeof file_table.$inferSelect)[];
@@ -17,7 +18,15 @@ export default function PilotContents(props: {
         <h1 className="mb-4 text-2xl font-bold">Pilot Store</h1>
         <div className="mb-4 flex items-center justify-between">
           <Breadcrumb items={props.parents} />
-          <UploadButton />
+          <div>
+            <SignedOut>
+              <SignInButton />
+            </SignedOut>
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
+          </div>
+          {/* <UploadButton /> */}
         </div>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">

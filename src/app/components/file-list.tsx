@@ -43,8 +43,8 @@ export function FileList({ file, onFileClick }: FileListProps) {
             {file.name}
           </a>
         }
-        <p className="text-sm text-gray-400">{file.size}</p>
       </div>
+      <p className="text-sm text-gray-400">{`${file.size} KB`}</p>
     </div>
   );
 }
