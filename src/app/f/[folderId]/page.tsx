@@ -24,5 +24,12 @@ export default async function Pilot(props: {
     parentPromise,
   ]);
 
-  return <PilotContents files={files} folders={folders} parents={parents} />;
+  return (
+    <PilotContents
+      files={files}
+      folders={folders}
+      parents={parents}
+      folderId={safeFolderId}
+    />
+  );
 }

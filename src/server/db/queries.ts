@@ -11,10 +11,10 @@ export const Queries = {
   getAllParentsForFolder: async function (folderId: bigint) {
     const parents = [];
     let currentId: bigint | null = folderId;
-    while (currentId !== BigInt(1)) {
-      if (currentId === null) {
-        throw new Error("Invalid folder id");
-      }
+    while (currentId !== null) {
+      // if (currentId === null) {
+      //   throw new Error("Invalid folder id");
+      // }
       const folder = await db
         .selectDistinct()
         .from(folderSchema)
@@ -43,6 +43,12 @@ export const Queries = {
       .from(folderSchema)
       .where(eq(folderSchema.parentId, BigInt(folderId)));
   },
+  getFolderById: function (folderId: bigint) {
+    return db
+      .selectDistinct()
+      .from(folderSchema)
+      .where(eq(folderSchema.id, folderId));
+  },
 };
 
 export const Mutations = {
@@ -50,11 +56,11 @@ export const Mutations = {
     file: {
       name: string;
       type: string;
+      ownerId: string;
       parentId: bigint;
       url: string;
       size: string;
     };
-    userId: string;
   }) {
     return await db.insert(fileSchema).values(input.file);
   },

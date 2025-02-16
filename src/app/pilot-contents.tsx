@@ -11,6 +11,7 @@ export default function PilotContents(props: {
   files: (typeof file_table.$inferSelect)[];
   folders: (typeof folder_table.$inferSelect)[];
   parents: (typeof folder_table.$inferSelect)[];
+  folderId: number;
 }) {
   const navigate = useRouter();
   return (
@@ -26,6 +27,7 @@ export default function PilotContents(props: {
                 onClientUploadComplete={() => {
                   navigate.refresh();
                 }}
+                input={{ folderId: props.folderId }}
               />
             </div>
             <SignedOut>
