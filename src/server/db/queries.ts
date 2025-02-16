@@ -1,6 +1,7 @@
 import "server-only";
 import { db } from "~/server/db";
 import {
+  DB_File,
   file_table as fileSchema,
   folder_table as folderSchema,
 } from "~/server/db/schema";
@@ -41,5 +42,20 @@ export const Queries = {
       .select()
       .from(folderSchema)
       .where(eq(folderSchema.parentId, BigInt(folderId)));
+  },
+};
+
+export const Mutations = {
+  createFile: async function (input: {
+    file: {
+      name: string;
+      type: string;
+      parentId: bigint;
+      url: string;
+      size: string;
+    };
+    userId: string;
+  }) {
+    return await db.insert(fileSchema).values(input.file);
   },
 };

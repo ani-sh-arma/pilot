@@ -2,6 +2,7 @@ import { File, Folder, Image, Video } from "lucide-react";
 import type { File as FileItem } from "../../lib/mock-data";
 import type { file_table, folder_table } from "~/server/db/schema";
 import Link from "next/link";
+import { double } from "drizzle-orm/mysql-core";
 
 interface FileListProps {
   file: typeof file_table.$inferSelect;
@@ -44,7 +45,7 @@ export function FileList({ file, onFileClick }: FileListProps) {
           </a>
         }
       </div>
-      <p className="text-sm text-gray-400">{`${file.size} KB`}</p>
+      <p className="text-sm text-gray-400">{`${parseInt(file.size ?? "0") / 1000} KB`}</p>
     </div>
   );
 }
