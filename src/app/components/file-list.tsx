@@ -7,7 +7,7 @@ interface FileListProps {
   file: typeof file_table.$inferSelect;
 }
 
-export function FileList({ file}: FileListProps) {
+export function FileList({ file }: FileListProps) {
   const getIcon = (type: FileItem["type"]) => {
     switch (type) {
       case "doc":
