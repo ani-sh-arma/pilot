@@ -5,6 +5,7 @@ import { FileList, FolderList } from "./components/file-list";
 import type { file_table, folder_table } from "~/server/db/schema";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import { UploadButton } from "./components/uploadthing";
+import { CreateFolderButton } from "./components/upload-button";
 import { useRouter } from "next/navigation";
 
 export default function PilotContents(props: {
@@ -27,8 +28,12 @@ export default function PilotContents(props: {
                 onClientUploadComplete={() => {
                   navigate.refresh();
                 }}
+                onUploadError={(e) => {
+                  alert(`Error Occured : ${e}`);
+                }}
                 input={{ folderId: props.folderId }}
               />
+              <CreateFolderButton parentId={props.folderId} />
             </div>
             <SignedOut>
               <SignInButton />
