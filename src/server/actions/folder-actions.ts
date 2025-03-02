@@ -23,6 +23,6 @@ export async function createFolderAction(folderName: string, parentId: number) {
       },
     });
   } catch (e) {
-    throw new UploadThingError("An error occurred");
+    throw new Error(`An error occurred ${e}`);
   }
 }

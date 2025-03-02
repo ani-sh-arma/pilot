@@ -35,7 +35,9 @@ export default function PilotContents(props: {
               />
               <CreateFolderButton
                 parentId={props.folderId}
-                onCreated={navigate.refresh}
+                onCreated={() => {
+                  navigate.refresh;
+                }}
               />
             </div>
             <SignedOut>

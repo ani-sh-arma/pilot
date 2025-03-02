@@ -33,6 +33,7 @@ export default async function Pilot(props: {
       />
     );
   } catch (e) {
+    console.log(e);
     return <PilotHome />;
   }
 }

@@ -16,9 +16,6 @@ export default function PilotHome() {
             <UserButton />
           </SignedIn>
         </div>
-        <div>
-          <a href="/f/"></a>
-        </div>
       </center>
     </div>
   );
