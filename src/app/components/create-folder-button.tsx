@@ -3,6 +3,7 @@
 import { Plus, X } from "lucide-react";
 import { useState } from "react";
 import { createFolderAction } from "~/server/actions/folder-actions";
+import { getErrorMessage } from "~/lib/utils/error-handling";
 
 export function CreateFolderButton(props: {
   parentId: number;
@@ -15,11 +16,11 @@ export function CreateFolderButton(props: {
     try {
       await createFolderAction(folderName, props.parentId);
       props.onCreated();
+      setFolderName("");
+      setIsModalOpen(false);
     } catch (e) {
-      alert(e instanceof Error ? e.message : "An error occurred");
+      alert(getErrorMessage(e));
     }
-    setFolderName("");
-    setIsModalOpen(false);
   };
 
   return (
@@ -55,9 +56,9 @@ export function CreateFolderButton(props: {
               onChange={(e) => setFolderName(e.target.value)}
               placeholder="Enter folder name"
               autoFocus
-              onKeyDown={(e) => {
+              onKeyDown={async (e) => {
                 if (e.key === "Enter") {
-                  handleCreateFolder();
+                  await handleCreateFolder();
                 }
               }}
               className="mb-4 w-full rounded-md border border-gray-300 p-2 text-black focus:border-blue-500 focus:outline-none"

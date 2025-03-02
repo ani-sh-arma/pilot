@@ -1,19 +1,20 @@
 "use server";
 
 import { auth } from "@clerk/nextjs/server";
-import { UploadThingError } from "uploadthing/server";
+import { AppError } from "~/lib/utils/error-handling";
 import { Mutations, Queries } from "~/server/db/queries";
 
 export async function createFolderAction(folderName: string, parentId: number) {
   try {
     const user = await auth();
-    if (!user.userId) throw new Error("Unauthorized");
+    if (!user.userId) throw new AppError("Unauthorized");
 
     const folder = await Queries.getFolderById(BigInt(parentId));
 
-    if (!folder) throw new Error("Invalid folder id");
+    if (!folder) throw new AppError("Invalid folder id");
 
-    if (folder[0]?.ownerId !== user.userId) throw new Error("Unauthorized");
+    if (folder[0]?.ownerId !== user.userId)
+      throw new AppError("Unauthorized");
 
     await Mutations.createFolder({
       folder: {
@@ -22,7 +23,7 @@ export async function createFolderAction(folderName: string, parentId: number) {
         parentId: BigInt(parentId),
       },
     });
-  } catch (e) {
-    throw new Error(`An error occurred ${e}`);
+  } catch (error) {
+    throw new AppError(error instanceof Error ? error.message : 'Failed to create folder');
   }
 }
