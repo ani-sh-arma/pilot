@@ -63,4 +63,13 @@ export const Mutations = {
   }) {
     return await db.insert(fileSchema).values(input.file);
   },
+  createFolder: async function (input: {
+    folder: {
+      name: string;
+      ownerId: string;
+      parentId: bigint;
+    };
+  }) {
+    return await db.insert(folderSchema).values(input.folder);
+  },
 };
