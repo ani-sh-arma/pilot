@@ -30,8 +30,8 @@ export default function PilotContents(props: {
                 onClientUploadComplete={() => {
                   navigate.refresh();
                 }}
-                onUploadError={() => {
-                  setError("Error Occured");
+                onUploadError={(e) => {
+                  setError(`Error Occured ${e}`);
                 }}
                 input={{ folderId: props.folderId }}
               />

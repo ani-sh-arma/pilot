@@ -1,4 +1,4 @@
-import { File, Folder, Image, Video } from "lucide-react";
+import { File, Folder, Image, Video, Music, FileText } from "lucide-react";
 import type { File as FileItem } from "../../lib/mock-data";
 import type { file_table, folder_table } from "~/server/db/schema";
 import Link from "next/link";
@@ -11,11 +11,15 @@ export function FileList({ file }: FileListProps) {
   const getIcon = (type: FileItem["type"]) => {
     switch (type) {
       case "doc":
-        return <File className="h-6 w-6 text-blue-400" />;
+        return <FileText className="h-6 w-6 text-blue-400" />;
       case "image":
         return <Image className="h-6 w-6 text-green-400" />;
       case "video":
         return <Video className="h-6 w-6 text-red-400" />;
+      case "audio":
+        return <Music className="h-6 w-6 text-purple-400" />;
+      default:
+        return <File className="h-6 w-6 text-gray-400" />;
     }
   };
 
@@ -54,21 +58,19 @@ interface FolderListProps {
 
 export function FolderList({ folder }: FolderListProps) {
   return (
-    <div
-      key={folder.id}
-      className="flex items-center rounded-lg bg-gray-800 p-4 shadow-md transition-shadow hover:shadow-lg"
+    <Link
+      href={`/f/${folder.id}`}
+      className="text-lg font-medium text-gray-100 hover:text-blue-400"
     >
-      <Folder className="h-6 w-6 text-yellow-400" />
-      <div className="ml-4 flex-grow">
-        {
-          <Link
-            href={`/f/${folder.id}`}
-            className="text-lg font-medium text-gray-100 hover:text-blue-400"
-          >
-            {folder.name}
-          </Link>
-        }
-      </div>
-    </div>
+      {
+        <div
+          key={folder.id}
+          className="flex items-center rounded-lg bg-gray-800 p-4 shadow-md transition-shadow hover:shadow-lg"
+        >
+          <Folder className="h-6 w-6 text-yellow-400" />
+          <div className="ml-4 flex-grow">{folder.name}</div>
+        </div>
+      }
+    </Link>
   );
 }

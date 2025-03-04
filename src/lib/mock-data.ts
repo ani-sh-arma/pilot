@@ -1,7 +1,7 @@
 export interface File {
   id: string;
   name: string;
-  type: "doc" | "image" | "video";
+  type: "file" | "doc" | "image" | "video" | "audio";
   parentId: string;
   url: string;
   size: string;
