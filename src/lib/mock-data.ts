@@ -7,6 +7,64 @@ export interface File {
   size: string;
 }
 
+export const imageTypes = ["png", "jpg", "jpeg", "gif", "webp", "svg"];
+export const videoTypes = [
+  "mp4",
+  "mov",
+  "avi",
+  "mkv",
+  "flv",
+  "wmv",
+  "m4v",
+  "webm",
+  "ogg",
+  "ogv",
+  "mpeg",
+  "mpg",
+  "mpeg4",
+  "3gp",
+  "3gpp",
+  "3g2",
+  "3gpp2",
+  "m2ts",
+  "ts",
+  "mts",
+  "webm",
+  "vob",
+  "m4p",
+];
+export const audioTypes = [
+  "mp3",
+  "wav",
+  "ogg",
+  "wma",
+  "aac",
+  "flac",
+  "ape",
+  "m4a",
+  "m4b",
+  "m4r",
+  "m4a",
+];
+export const docTypes = [
+  "txt",
+  "doc",
+  "docx",
+  "pdf",
+  "ppt",
+  "pptx",
+  "xls",
+  "xlsx",
+  "csv",
+  "rtf",
+  "odt",
+  "ods",
+  "odp",
+  "odg",
+  "md",
+  "html",
+];
+
 export type Folder = {
   id: string;
   name: string;
