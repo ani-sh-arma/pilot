@@ -1,7 +1,9 @@
+export type FileType = "file" | "doc" | "image" | "video" | "audio";
+
 export interface File {
   id: string;
   name: string;
-  type: "file" | "doc" | "image" | "video" | "audio";
+  type: FileType;
   parentId: string;
   url: string;
   size: string;

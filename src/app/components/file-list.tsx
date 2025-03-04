@@ -1,4 +1,12 @@
-import { File, Folder, Image, Video, Music, FileText } from "lucide-react";
+import {
+  File,
+  Folder,
+  Image,
+  Video,
+  Music,
+  FileText,
+  MoreVertical,
+} from "lucide-react";
 import type { File as FileItem } from "../../lib/mock-data";
 import type { file_table, folder_table } from "~/server/db/schema";
 import Link from "next/link";
@@ -8,7 +16,7 @@ interface FileListProps {
 }
 
 export function FileList({ file }: FileListProps) {
-  const getIcon = (type: FileItem["type"]) => {
+  const getIcon = (type: string) => {
     switch (type) {
       case "doc":
         return <FileText className="h-6 w-6 text-blue-400" />;
@@ -28,26 +36,23 @@ export function FileList({ file }: FileListProps) {
       key={file.id}
       className="flex items-center rounded-lg bg-gray-800 p-4 shadow-md transition-shadow hover:shadow-lg"
     >
-      {getIcon(
-        file.type === "image"
-          ? "image"
-          : file.type === "video"
-            ? "video"
-            : "doc",
-      )}
+      {getIcon(file.type ?? "file")}
       <div className="ml-4 flex-grow">
         {
           <a
             href={file.url ?? ""}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-lg font-medium text-gray-100 hover:text-blue-400"
+            className="text-md font-medium text-gray-100 hover:text-blue-400"
           >
             {file.name}
           </a>
         }
       </div>
       <p className="text-sm text-gray-400">{`${parseInt(file.size ?? "0") / 1000} KB`}</p>
+      <button className="ml-4 p-1 hover:text-gray-300">
+        <MoreVertical className="h-5 w-5" />
+      </button>
     </div>
   );
 }
@@ -69,6 +74,14 @@ export function FolderList({ folder }: FolderListProps) {
         >
           <Folder className="h-6 w-6 text-yellow-400" />
           <div className="ml-4 flex-grow">{folder.name}</div>
+          <button
+            className="ml-4 p-1 hover:text-gray-300"
+            onClick={(e) => {
+              e.preventDefault();
+            }}
+          >
+            <MoreVertical className="h-5 w-5" />
+          </button>
         </div>
       }
     </Link>
