@@ -57,7 +57,7 @@ export function FileList({ file }: FileListProps) {
       window.location.reload();
     } catch (error) {
       setIsDeleting(false);
-      alert("Failed to delete file");
+      alert(error instanceof Error ? error.message : "Failed to delete file");
     }
   };
 

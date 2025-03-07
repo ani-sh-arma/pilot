@@ -56,6 +56,9 @@ export default function PilotContents(props: {
         {error !== "" && <div className="text-red-500">{error}</div>}
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {props.folders.length === 0 && props.files.length === 0 && (
+            <h1 className="text-gray-500">{"No files or folders"}</h1>
+          )}
           {props.folders.map((folder) => (
             <FolderList folder={folder} key={folder.id} />
           ))}

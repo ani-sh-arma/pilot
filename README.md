@@ -6,5 +6,12 @@
 - [x] Move folder open state to URL
 - [x] Add auth
 - [x] Add file upload
-- [ ] Delete file
-- [ ] Feature : Add text file creation and updation.
+- [x] Delete file
+- [ ] Homepage and onboarding
+- [ ] Delete folder
+- [ ] Add text file creation and updation.
+- [ ] Update data fetching so that only the logged in user's data is shown
+- [ ] Create a default home directory for every user after registration
+- [ ] Download file
+- [ ] Share file
+- [ ] Download as PDF
