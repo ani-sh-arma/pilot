@@ -25,6 +25,18 @@ export function FileList({ file }: FileListProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
+  console.log(`File Size : ${file.size}`);
+
+  let fileSize = parseInt(file.size ?? "0");
+  let sizeUnit = "B";
+  if (fileSize > 1024 && fileSize < 1024 * 1024) {
+    fileSize = fileSize / 1024;
+    sizeUnit = "KB";
+  } else if (fileSize > 1024 * 1024) {
+    fileSize = fileSize / 1024 / 1024;
+    sizeUnit = "MB";
+  }
+
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -77,7 +89,7 @@ export function FileList({ file }: FileListProps) {
           {file.name}
         </a>
       </div>
-      <p className="text-sm text-gray-400">{`${parseInt(file.size ?? "0") / 1000} KB`}</p>
+      <p className="text-sm text-gray-400">{`${fileSize.toFixed(2)} ${sizeUnit}`}</p>
       <div className="relative" ref={menuRef}>
         <button
           className="ml-4 p-1 hover:text-gray-300"
