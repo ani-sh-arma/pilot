@@ -75,6 +75,8 @@ export const ourFileRouter = {
         }
       });
 
+      console.log(`File key in uploadthing : ${file.key}`);
+
       await Mutations.createFile({
         file: {
           name: file.name,
@@ -82,6 +84,7 @@ export const ourFileRouter = {
           ownerId: metadata.userId,
           parentId: BigInt(metadata.parentId),
           url: file.ufsUrl,
+          fileKey: file.key,
           size: file.size.toString(),
         },
       });

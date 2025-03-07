@@ -9,6 +9,7 @@ import {
   Share,
   Trash,
   Download,
+  Loader2,
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import type { file_table, folder_table } from "~/server/db/schema";
@@ -21,6 +22,7 @@ interface FileListProps {
 
 export function FileList({ file }: FileListProps) {
   const [showMenu, setShowMenu] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -45,6 +47,17 @@ export function FileList({ file }: FileListProps) {
         return <Music className="h-6 w-6 text-purple-400" />;
       default:
         return <File className="h-6 w-6 text-gray-400" />;
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      setIsDeleting(true);
+      await deleteFileAction(file.id, file.fileKey ?? "");
+      window.location.reload();
+    } catch (error) {
+      setIsDeleting(false);
+      alert("Failed to delete file");
     }
   };
 
@@ -74,25 +87,30 @@ export function FileList({ file }: FileListProps) {
         </button>
         {showMenu && (
           <div className="absolute right-0 top-10 z-50 w-48 rounded-md bg-gray-700 py-1 shadow-lg">
-            <button className="flex w-full items-center px-4 py-2 text-sm text-gray-200 hover:bg-gray-600">
-              <Share className="mr-2 h-4 w-4" />
-              Share
-            </button>
-            <button className="flex w-full items-center px-4 py-2 text-sm text-gray-200 hover:bg-gray-600">
-              <Download className="mr-2 h-4 w-4" />
-              Download
-            </button>
-            <button
-              className="flex w-full items-center px-4 py-2 text-sm text-red-400 hover:bg-gray-600"
-              onClick={() =>
-                deleteFileAction(file.id, file.ownerId).then(() =>
-                  window.location.reload(),
-                )
-              }
-            >
-              <Trash className="mr-2 h-4 w-4" />
-              Delete
-            </button>
+            {isDeleting ? (
+              <div className="flex items-center justify-center px-4 py-4 text-sm text-gray-200">
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Deleting...
+              </div>
+            ) : (
+              <>
+                <button className="flex w-full items-center px-4 py-2 text-sm text-gray-200 hover:bg-gray-600">
+                  <Share className="mr-2 h-4 w-4" />
+                  Share
+                </button>
+                <button className="flex w-full items-center px-4 py-2 text-sm text-gray-200 hover:bg-gray-600">
+                  <Download className="mr-2 h-4 w-4" />
+                  Download
+                </button>
+                <button
+                  className="flex w-full items-center px-4 py-2 text-sm text-red-400 hover:bg-gray-600"
+                  onClick={handleDelete}
+                >
+                  <Trash className="mr-2 h-4 w-4" />
+                  Delete
+                </button>
+              </>
+            )}
           </div>
         )}
       </div>
@@ -141,10 +159,6 @@ export function FolderList({ folder }: FolderListProps) {
           </button>
           {showMenu && (
             <div className="absolute right-0 top-10 z-50 w-48 rounded-md bg-gray-700 py-1 shadow-lg">
-              <button className="flex w-full items-center px-4 py-2 text-sm text-gray-200 hover:bg-gray-600">
-                <Share className="mr-2 h-4 w-4" />
-                Share
-              </button>
               <button className="flex w-full items-center px-4 py-2 text-sm text-red-400 hover:bg-gray-600">
                 <Trash className="mr-2 h-4 w-4" />
                 Delete

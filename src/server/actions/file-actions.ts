@@ -1,11 +1,27 @@
 "use server";
 
+import { auth } from "@clerk/nextjs/server";
+import { UTApi } from "uploadthing/server";
 import { Mutations } from "~/server/db/queries";
 
-export async function deleteFileAction(fileId: bigint, ownerId: string) {
+const utApi = new UTApi();
+
+export async function deleteFileAction(fileId: bigint, fileKey: string) {
   try {
+    const user = await auth();
+    if (!user.userId) {
+      throw new Error("Unauthorized");
+    }
+
+    if (fileKey !== "") {
+      const res = await utApi.deleteFiles([fileKey]);
+      console.log(res);
+    } else {
+      throw new Error("File key is empty");
+    }
+
     await Mutations.deleteFile({
-      file: { fileId, ownerId },
+      file: { fileId, ownerId: user.userId },
     });
   } catch (error) {
     throw new Error(

@@ -19,6 +19,7 @@ export const file_table = createTable(
     type: text("type"),
     parentId: bigint("parent_id", { mode: "bigint", unsigned: true }).notNull(),
     url: text("url"),
+    fileKey: text("file_key").default(""),
     size: text("size"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },

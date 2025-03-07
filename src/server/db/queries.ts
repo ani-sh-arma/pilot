@@ -4,7 +4,7 @@ import {
   file_table as fileSchema,
   folder_table as folderSchema,
 } from "~/server/db/schema";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 export const Queries = {
   getAllParentsForFolder: async function (folderId: bigint) {
@@ -57,6 +57,7 @@ export const Mutations = {
       ownerId: string;
       parentId: bigint;
       url: string;
+      fileKey: string;
       size: string;
     };
   }) {
@@ -70,7 +71,12 @@ export const Mutations = {
   }) {
     return await db
       .delete(fileSchema)
-      .where(eq(fileSchema.id, input.file.fileId));
+      .where(
+        and(
+          eq(fileSchema.id, input.file.fileId),
+          eq(fileSchema.ownerId, input.file.ownerId),
+        ),
+      );
   },
   createFolder: async function (input: {
     folder: {
