@@ -11,9 +11,6 @@ export const Queries = {
     const parents = [];
     let currentId: bigint | null = folderId;
     while (currentId !== null) {
-      // if (currentId === null) {
-      //   throw new Error("Invalid folder id");
-      // }
       const folder = await db
         .selectDistinct()
         .from(folderSchema)
@@ -33,14 +30,16 @@ export const Queries = {
     return db
       .select()
       .from(fileSchema)
-      .where(eq(fileSchema.parentId, BigInt(folderId)));
+      .where(eq(fileSchema.parentId, BigInt(folderId)))
+      .orderBy(fileSchema.createdAt);
   },
 
   getFolders: function (folderId: bigint) {
     return db
       .select()
       .from(folderSchema)
-      .where(eq(folderSchema.parentId, BigInt(folderId)));
+      .where(eq(folderSchema.parentId, BigInt(folderId)))
+      .orderBy(folderSchema.createdAt);
   },
   getFolderById: function (folderId: bigint) {
     return db
