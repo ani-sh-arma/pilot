@@ -1,4 +1,4 @@
-'use server'
+"use server";
 
 import { Mutations } from "~/server/db/queries";
 
@@ -8,7 +8,11 @@ export async function deleteFileAction(fileId: bigint, ownerId: string) {
       file: { fileId, ownerId },
     });
   } catch (error) {
-    throw new Error('Failed to delete file');
+    throw new Error(
+      error instanceof Error
+        ? `Failed to delete file: ${error.message}`
+        : "Failed to delete file",
+    );
   }
 }
 

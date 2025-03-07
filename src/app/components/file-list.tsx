@@ -11,11 +11,8 @@ import {
   Download,
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
-
-import type { File as FileItem } from "../../lib/mock-data";
 import type { file_table, folder_table } from "~/server/db/schema";
 import Link from "next/link";
-import { Mutations } from "~/server/db/queries";
 import { deleteFileAction } from "~/server/actions/file-actions";
 
 interface FileListProps {
