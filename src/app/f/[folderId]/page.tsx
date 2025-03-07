@@ -1,6 +1,6 @@
-import PilotHome from "~/app/page";
-import PilotContents from "./../../pilot-contents";
+import PilotHome from "~/app/(home)/page";
 import { Queries } from "~/server/db/queries";
+import PilotContents from "./pilot-contents";
 
 export default async function Pilot(props: {
   params: Promise<{ folderId: string }>;

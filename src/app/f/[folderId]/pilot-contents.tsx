@@ -1,13 +1,13 @@
 "use client";
 
-import { Breadcrumb } from "./components/breadcrumb";
-import { FileList, FolderList } from "./components/file-list";
 import type { file_table, folder_table } from "~/server/db/schema";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
-import { UploadButton } from "./components/uploadthing";
-import { CreateFolderButton } from "./components/create-folder-button";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Breadcrumb } from "~/app/components/breadcrumb";
+import { UploadButton } from "~/app/components/uploadthing";
+import { CreateFolderButton } from "~/app/components/create-folder-button";
+import { FolderList, FileList } from "~/app/components/file-list";
 
 export default function PilotContents(props: {
   files: (typeof file_table.$inferSelect)[];
