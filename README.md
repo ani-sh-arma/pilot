@@ -7,7 +7,7 @@
 - [x] Add auth
 - [x] Add file upload
 - [x] Delete file
-- [ ] Homepage and onboarding
+- [x] Homepage and onboarding
 - [ ] Delete folder
 - [ ] Add text file creation and updation.
 - [ ] Update data fetching so that only the logged in user's data is shown

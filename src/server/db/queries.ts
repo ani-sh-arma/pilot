@@ -5,8 +5,6 @@ import {
   folder_table as folderSchema,
 } from "~/server/db/schema";
 import { and, eq, isNull } from "drizzle-orm";
-import { get } from "http";
-import { rootCertificates } from "tls";
 
 export const Queries = {
   getAllParentsForFolder: async function (folderId: bigint) {

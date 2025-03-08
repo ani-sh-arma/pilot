@@ -1,8 +1,6 @@
 "use client";
 
-import Link from "next/link";
 import { ArrowRight, Cloud, Lock, Share2, Zap } from "lucide-react";
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import { getStartedAction } from "~/server/actions/actions";
 
 export default function Home() {
