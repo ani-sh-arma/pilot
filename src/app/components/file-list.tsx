@@ -52,6 +52,7 @@ export function FileList({ file }: FileListProps) {
       case "doc":
         return <FileText className="h-6 w-6 text-blue-400" />;
       case "image":
+        // eslint-disable-next-line @typescript-eslint/only-throw-error
         return <Image className="h-6 w-6 text-green-400" />;
       case "video":
         return <Video className="h-6 w-6 text-red-400" />;

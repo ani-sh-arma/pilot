@@ -66,7 +66,7 @@ export default function Home() {
           {/* Floating Elements Animation */}
           <div className="relative mt-20 h-64 w-full max-w-4xl md:h-80">
             <div className="absolute h-full w-full">
-              {[...Array(5)].map((_, i) => (
+              {Array.from({ length: 5 }).map((_, i) => (
                 <div
                   key={i}
                   className="absolute h-32 w-40 rounded-lg border border-slate-700 bg-gradient-to-r from-slate-800 to-gray-800 p-4 opacity-80 shadow-lg"
@@ -114,8 +114,8 @@ export default function Home() {
               </div>
               <h3 className="mb-3 text-xl font-semibold">Easy Sharing</h3>
               <p className="text-gray-400">
-                Share files and folders with anyone, even if they don't have a
-                Pilot account.
+                {`Share files and folders with anyone, even if they don't have a
+                Pilot account.`}
               </p>
             </div>
 

@@ -1,7 +1,4 @@
-import { auth } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
-import { Queries } from "~/server/db/queries";
-import { Cloud, Loader2 } from "lucide-react";
+import { Cloud} from "lucide-react";
 import { SignInButton } from "@clerk/nextjs";
 
 export default async function OnBoarding() {
