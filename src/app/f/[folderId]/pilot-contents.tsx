@@ -3,12 +3,12 @@
 import type { file_table, folder_table } from "~/server/db/schema";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Breadcrumb } from "~/app/components/breadcrumb";
 import { UploadButton } from "~/app/components/uploadthing";
 import { CreateFolderButton } from "~/app/components/create-folder-button";
 import { FolderList, FileList } from "~/app/components/file-list";
-import { Cloud } from "lucide-react";
+import { Cloud, MoreVertical } from "lucide-react";
 
 export default function PilotContents(props: {
   files: (typeof file_table.$inferSelect)[];
@@ -17,19 +17,92 @@ export default function PilotContents(props: {
   folderId: number;
 }) {
   const [error, setError] = useState("");
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
   const navigate = useRouter();
+
+  // Handle clicks outside the mobile menu to close it
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        mobileMenuRef.current &&
+        !mobileMenuRef.current.contains(event.target as Node)
+      ) {
+        setShowMobileMenu(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100">
       <div className="container mx-auto p-4">
-        <div className="flex items-center gap-2">
-          <Cloud className="h-8 w-8 text-blue-400" />
-          <span className="bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-2xl font-bold text-transparent">
-            Pilot
-          </span>
+        <div className="mb-4 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Cloud className="h-8 w-8 text-blue-400" />
+            <span className="bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-2xl font-bold text-transparent">
+              Pilot
+            </span>
+          </div>
+
+          {/* Mobile menu button */}
+          <div className="relative lg:hidden" ref={mobileMenuRef}>
+            <button
+              onClick={() => setShowMobileMenu(!showMobileMenu)}
+              className="rounded-full p-2 hover:bg-gray-800"
+            >
+              <MoreVertical className="h-6 w-6" />
+            </button>
+
+            {/* Mobile dropdown menu */}
+            {showMobileMenu && (
+              <div className="absolute right-0 top-full z-50 mt-2 w-48 rounded-md bg-gray-800 py-2 shadow-lg">
+                <div className="px-4 py-2">
+                  <UploadButton
+                    endpoint={"pilotUploader"}
+                    onClientUploadComplete={() => {
+                      navigate.refresh();
+                      setShowMobileMenu(false);
+                    }}
+                    onUploadError={(error) => {
+                      setError(
+                        error instanceof Error
+                          ? error.message
+                          : "Upload failed",
+                      );
+                    }}
+                    input={{ folderId: props.folderId }}
+                  />
+                </div>
+                <div className="px-4 py-2">
+                  <CreateFolderButton
+                    parentId={props.folderId}
+                    onCreated={() => {
+                      navigate.refresh();
+                      setShowMobileMenu(false);
+                    }}
+                  />
+                </div>
+                <div className="px-4 py-2">
+                  <SignedOut>
+                    <SignInButton />
+                  </SignedOut>
+                  <SignedIn>
+                    <UserButton />
+                  </SignedIn>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
-        <div className="mb-4 flex flex-col items-center justify-between md:flex-col lg:flex-row">
+
+        <div className="mb-4 flex flex-col items-start justify-between lg:flex-row lg:items-center">
+          {/* Breadcrumb - always visible */}
           <Breadcrumb items={props.parents} />
-          <div className="right-0 float-left flex flex-row gap-5">
+
+          {/* Desktop action buttons - only visible on large screens */}
+          <div className="mt-4 hidden lg:flex lg:items-center lg:gap-5">
             <div className="flex items-center gap-2">
               <UploadButton
                 endpoint={"pilotUploader"}
