@@ -5,6 +5,8 @@ import {
   folder_table as folderSchema,
 } from "~/server/db/schema";
 import { and, eq, isNull } from "drizzle-orm";
+import { get } from "http";
+import { rootCertificates } from "tls";
 
 export const Queries = {
   getAllParentsForFolder: async function (folderId: bigint) {
@@ -91,9 +93,41 @@ export const Mutations = {
     folder: {
       name: string;
       ownerId: string;
-      parentId: bigint;
+      parentId: bigint | null;
     };
   }) {
     return await db.insert(folderSchema).values(input.folder);
+  },
+  onBoardUser: async function (ownerId: string) {
+    const root = await Queries.getRootFolderForUser(ownerId);
+    if (root) {
+      return root.id;
+    }
+
+    const folder = await db
+      .insert(folderSchema)
+      .values({
+        name: "Home",
+        ownerId: ownerId,
+        parentId: null,
+      })
+      .$returningId();
+
+    const rootId = folder[0]!.id;
+
+    await db.insert(folderSchema).values([
+      {
+        name: "Documents",
+        ownerId: ownerId,
+        parentId: rootId,
+      },
+      {
+        name: "Pictures",
+        ownerId: ownerId,
+        parentId: rootId,
+      },
+    ]);
+
+    return rootId;
   },
 };
