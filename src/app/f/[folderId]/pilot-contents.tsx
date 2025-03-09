@@ -47,13 +47,19 @@ export default function PilotContents(props: {
           </div>
 
           {/* Mobile menu button */}
-          <div className="relative lg:hidden" ref={mobileMenuRef}>
+          <div className="relative flex lg:hidden" ref={mobileMenuRef}>
             <button
               onClick={() => setShowMobileMenu(!showMobileMenu)}
               className="rounded-full p-2 hover:bg-gray-800"
             >
               <MoreVertical className="h-6 w-6" />
             </button>
+            <SignedOut>
+              <SignInButton />
+            </SignedOut>
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
 
             {/* Mobile dropdown menu */}
             {showMobileMenu && (
@@ -83,14 +89,6 @@ export default function PilotContents(props: {
                       setShowMobileMenu(false);
                     }}
                   />
-                </div>
-                <div className="px-4 py-2">
-                  <SignedOut>
-                    <SignInButton />
-                  </SignedOut>
-                  <SignedIn>
-                    <UserButton />
-                  </SignedIn>
                 </div>
               </div>
             )}

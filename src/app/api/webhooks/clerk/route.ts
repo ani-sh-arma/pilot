@@ -6,6 +6,7 @@ import { file_table, folder_table } from "~/server/db/schema";
 import { eq } from "drizzle-orm";
 import { env } from "~/env";
 import { UTApi } from "uploadthing/server";
+import { redirect } from "next/navigation";
 
 const utApi = new UTApi();
 
@@ -85,7 +86,8 @@ export async function POST(req: Request) {
       console.log(`Deleted Files count: ${ownersFiles.length}`);
       console.log(`Deleted Folders operation completed`);
 
-      return new Response(JSON.stringify({ success: true }), { status: 200 });
+      //   return new Response(JSON.stringify({ success: true }), { status: 200 });
+      return redirect("/");
     } catch (error) {
       console.error("Error deleting user data:", error);
       return new Response("Error deleting user data", { status: 500 });

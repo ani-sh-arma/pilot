@@ -4,8 +4,12 @@ import { Mutations, Queries } from "~/server/db/queries";
 import { Cloud, Loader2 } from "lucide-react";
 
 export default async function OnBoarding() {
+  console.log(" On Onboarding screen ");
+
   const user = await auth();
   if (!user.userId) {
+    console.log(" Signing in route caue user not found");
+
     return redirect("/signin");
   }
 
@@ -43,7 +47,9 @@ export default async function OnBoarding() {
               return redirect(`/f/${rootFolder}`);
             }}
           >
-            <button>{"Create Home Vault"}</button>
+            <button className="flex items-center rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-4 text-lg font-medium text-white transition-all duration-300 hover:from-blue-500 hover:to-indigo-500 hover:shadow-[0_0_25px_rgba(79,70,229,0.5)]">
+              {"Create Home Vault"}
+            </button>
           </form>
         </div>
       </div>

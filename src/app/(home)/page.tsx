@@ -32,14 +32,15 @@ export default function Home() {
         </div>
 
         {/* Floating Elements Animation */}
+        {/* Floating Elements Animation */}
         <div className="relative mt-20 h-64 w-full max-w-4xl md:h-80">
-          <div className="absolute h-full w-full">
+          <div className="absolute h-full w-full overflow-hidden">
             {Array.from({ length: 5 }).map((_, i) => (
               <div
                 key={i}
-                className="absolute h-32 w-40 rounded-lg border border-slate-700 bg-gradient-to-r from-slate-800 to-gray-800 p-4 opacity-80 shadow-lg"
+                className={`absolute h-24 w-28 rounded-lg border border-slate-700 bg-gradient-to-r from-slate-800 to-gray-800 p-4 opacity-80 shadow-lg sm:h-32 sm:w-40 ${i >= 3 ? "hidden sm:block" : ""}`}
                 style={{
-                  left: `${10 + i * 18}%`,
+                  left: `${Math.min(5 + i * 15, 75)}%`,
                   top: `${20 + (i % 3) * 15}%`,
                   transform: `rotate(${(i % 2) * 3 - 1.5}deg)`,
                   animation: `float ${3 + i * 0.5}s ease-in-out infinite alternate`,
