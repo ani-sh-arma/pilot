@@ -21,6 +21,7 @@ jobs:
           echo "SINGLESTORE_PASS=${{ secrets.SINGLESTORE_PASS }}" >> $GITHUB_ENV
           echo "SINGLESTORE_DB_NAME=${{ secrets.SINGLESTORE_DB_NAME }}" >> $GITHUB_ENV
           echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> $GITHUB_ENV
+          echo "DATABASE_URL=${{ secrets.CLERK_WEBHOOK_SECRET }}" >> $GITHUB_ENV
 
       - name: Copy .env.example files
         shell: bash
