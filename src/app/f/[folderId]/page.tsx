@@ -1,6 +1,8 @@
 import PilotHome from "~/app/(home)/page";
 import { Queries } from "~/server/db/queries";
 import PilotContents from "./pilot-contents";
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 
 export default async function Pilot(props: {
   params: Promise<{ folderId: string }>;
@@ -13,6 +15,16 @@ export default async function Pilot(props: {
         <h1> {"Invalid folder id"} </h1>
       </center>
     );
+  }
+
+  const user = await auth();
+  if (!user.userId) {
+    return redirect("/");
+  }
+
+  const folder = await Queries.getFolderById(BigInt(safeFolderId));
+  if (!folder[0] || folder[0].ownerId !== user.userId) {
+    return redirect("/");
   }
 
   try {
@@ -34,6 +46,6 @@ export default async function Pilot(props: {
     );
   } catch (e) {
     console.log(e);
-    return <PilotHome />;
+    return redirect("/");
   }
 }
