@@ -4,7 +4,7 @@ import {
   file_table as fileSchema,
   folder_table as folderSchema,
 } from "~/server/db/schema";
-import { and, eq, isNull } from "drizzle-orm";
+import { and, eq, inArray, isNull } from "drizzle-orm";
 
 export const Queries = {
   getAllParentsForFolder: async function (folderId: bigint) {
@@ -95,6 +95,53 @@ export const Mutations = {
     };
   }) {
     return await db.insert(folderSchema).values(input.folder);
+  },
+  deleteFolder: async function (input: {
+    folder: {
+      folderId: bigint;
+      ownerId: string;
+    };
+  }) {
+    // Get all subfolders recursively
+    const getAllSubFolders = async (folderId: bigint): Promise<bigint[]> => {
+      const subFolders = await db
+        .select({ id: folderSchema.id })
+        .from(folderSchema)
+        .where(eq(folderSchema.parentId, folderId));
+
+      const subFolderIds = subFolders.map((f) => f.id);
+      const childFolderIds = await Promise.all(
+        subFolderIds.map((id) => getAllSubFolders(id)),
+      );
+
+      return [folderId, ...childFolderIds.flat()];
+    };
+
+    const folderIds = await getAllSubFolders(input.folder.folderId);
+
+    // Delete all files in all folders
+    await db
+      .delete(fileSchema)
+      .where(
+        and(
+          eq(fileSchema.ownerId, input.folder.ownerId),
+          folderIds.length > 0
+            ? inArray(fileSchema.parentId, folderIds)
+            : undefined,
+        ),
+      );
+
+    // Delete all subfolders and the main folder
+    await db
+      .delete(folderSchema)
+      .where(
+        and(
+          eq(folderSchema.ownerId, input.folder.ownerId),
+          folderIds.length > 0
+            ? inArray(folderSchema.id, folderIds)
+            : undefined,
+        ),
+      );
   },
   onBoardUser: async function (ownerId: string) {
     const root = await Queries.getRootFolderForUser(ownerId);

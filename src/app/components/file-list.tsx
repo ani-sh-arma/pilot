@@ -14,7 +14,11 @@ import {
 import { useState, useEffect, useRef } from "react";
 import type { file_table, folder_table } from "~/server/db/schema";
 import Link from "next/link";
-import { deleteFileAction } from "~/server/actions/file-actions";
+import {
+  deleteFileAction,
+  deleteFolderAction,
+} from "~/server/actions/file-actions";
+import { useRouter } from "next/navigation";
 
 interface FileListProps {
   file: typeof file_table.$inferSelect;
@@ -24,6 +28,8 @@ export function FileList({ file }: FileListProps) {
   const [showMenu, setShowMenu] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  const navigate = useRouter();
 
   console.log(`File Size : ${file.size}`);
 
@@ -67,7 +73,7 @@ export function FileList({ file }: FileListProps) {
     try {
       setIsDeleting(true);
       await deleteFileAction(file.id, file.fileKey ?? "");
-      window.location.reload();
+      navigate.refresh();
     } catch (error) {
       setIsDeleting(false);
       alert(error instanceof Error ? error.message : "Failed to delete file");
@@ -137,7 +143,10 @@ interface FolderListProps {
 
 export function FolderList({ folder }: FolderListProps) {
   const [showMenu, setShowMenu] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  const navigate = useRouter();
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -149,37 +158,58 @@ export function FolderList({ folder }: FolderListProps) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const handleFolderDelete = async () => {
+    try {
+      setIsDeleting(true);
+      await deleteFolderAction(folder.id);
+      navigate.refresh();
+    } catch (error) {
+      setIsDeleting(false);
+      alert(error instanceof Error ? error.message : "Failed to delete file");
+    }
+  };
+
   return (
-    <Link
-      href={`/f/${folder.id}`}
-      className="text-lg font-medium text-gray-100 hover:text-blue-400"
+    <div
+      key={folder.id}
+      className="relative flex items-center rounded-lg bg-gray-800 p-4 shadow-md transition-shadow hover:shadow-lg"
     >
-      <div
-        key={folder.id}
-        className="relative flex items-center rounded-lg bg-gray-800 p-4 shadow-md transition-shadow hover:shadow-lg"
+      <Link
+        href={`/f/${folder.id}`}
+        className="flex flex-grow text-lg font-medium text-gray-100 hover:text-blue-400"
       >
         <Folder className="h-6 w-6 text-yellow-400" />
         <div className="ml-4 flex-grow">{folder.name}</div>
-        <div className="relative" ref={menuRef}>
-          <button
-            className="ml-4 p-1 hover:text-gray-300"
-            onClick={(e) => {
-              e.preventDefault();
-              setShowMenu(!showMenu);
-            }}
-          >
-            <MoreVertical className="h-5 w-5" />
-          </button>
-          {showMenu && (
-            <div className="absolute right-0 top-10 z-50 w-48 rounded-md bg-gray-700 py-1 shadow-lg">
-              <button className="flex w-full items-center px-4 py-2 text-sm text-red-400 hover:bg-gray-600">
+      </Link>
+      <div className="relative" ref={menuRef}>
+        <button
+          className="ml-4 p-1 hover:text-gray-300"
+          onClick={(e) => {
+            e.preventDefault();
+            setShowMenu(!showMenu);
+          }}
+        >
+          <MoreVertical className="h-5 w-5" />
+        </button>
+        {showMenu && (
+          <div className="absolute right-0 top-10 z-50 w-48 rounded-md bg-gray-700 py-1 shadow-lg">
+            {isDeleting ? (
+              <div className="flex items-center justify-center px-4 py-4 text-sm text-gray-200">
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Deleting...
+              </div>
+            ) : (
+              <button
+                className="flex w-full items-center px-4 py-2 text-sm text-red-400 hover:bg-gray-600"
+                onClick={handleFolderDelete}
+              >
                 <Trash className="mr-2 h-4 w-4" />
                 Delete
               </button>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
       </div>
-    </Link>
+    </div>
   );
 }

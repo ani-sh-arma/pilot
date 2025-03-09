@@ -9,6 +9,7 @@ export default async function Pilot(props: {
 }) {
   const params = await props.params;
   const safeFolderId = parseInt(params.folderId);
+  console.log(`Safe Folder ID : ${safeFolderId}`);
   if (isNaN(safeFolderId)) {
     return (
       <center>
@@ -19,11 +20,14 @@ export default async function Pilot(props: {
 
   const user = await auth();
   if (!user.userId) {
+    console.log(`User not found`);
+
     return redirect("/");
   }
 
   const folder = await Queries.getFolderById(BigInt(safeFolderId));
   if (!folder[0] || folder[0].ownerId !== user.userId) {
+    console.log(`Folder not found`);
     return redirect("/");
   }
 
@@ -45,7 +49,7 @@ export default async function Pilot(props: {
       />
     );
   } catch (e) {
-    console.log(e);
+    console.log(`Error : ${e}`);
     return redirect("/");
   }
 }

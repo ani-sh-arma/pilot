@@ -32,12 +32,16 @@ export async function deleteFileAction(fileId: bigint, fileKey: string) {
   }
 }
 
-// export async function deleteFolderAction(folderId: bigint, ownerId: string) {
-//   try {
-//     await Mutations.deleteFolder({
-//       folder: { folderId, ownerId },
-//     });
-//   } catch (error) {
-//     throw new Error('Failed to delete folder');
-//   }
-// }
+export async function deleteFolderAction(folderId: bigint) {
+  try {
+    const user = await auth();
+    if (!user.userId) {
+      throw new Error("Unauthorized");
+    }
+    await Mutations.deleteFolder({
+      folder: { folderId, ownerId: user.userId },
+    });
+  } catch (error) {
+    throw new Error("Failed to delete folder");
+  }
+}
