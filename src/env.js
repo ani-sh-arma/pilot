@@ -17,6 +17,8 @@ export const env = createEnv({
     SINGLESTORE_HOST: z.string(),
     SINGLESTORE_PORT: z.string(),
     SINGLESTORE_DB_NAME: z.string(),
+
+    CLERK_WEBHOOK_SECRET: z.string(),
   },
 
   /**
@@ -44,6 +46,7 @@ export const env = createEnv({
     SINGLESTORE_DB_NAME: process.env.SINGLESTORE_DB_NAME,
     NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
     NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,
+    CLERK_WEBHOOK_SECRET: process.env.CLERK_WEBHOOK_SECRET,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
   /**
