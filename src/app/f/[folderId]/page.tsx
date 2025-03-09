@@ -1,8 +1,8 @@
-import PilotHome from "~/app/(home)/page";
 import { Queries } from "~/server/db/queries";
 import PilotContents from "./pilot-contents";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import { getErrorMessage } from "~/lib/utils/error-handling";
 
 export default async function Pilot(props: {
   params: Promise<{ folderId: string }>;
@@ -49,7 +49,7 @@ export default async function Pilot(props: {
       />
     );
   } catch (e) {
-    console.log(`Error : ${e}`);
+    console.log(`Error : ${getErrorMessage(e)}`);
     return redirect("/");
   }
 }

@@ -1,5 +1,5 @@
 import { Cloud } from "lucide-react";
-import { SignInButton, SignUpButton } from "@clerk/nextjs";
+import { SignInButton } from "@clerk/nextjs";
 
 export default async function OnBoarding() {
   return (

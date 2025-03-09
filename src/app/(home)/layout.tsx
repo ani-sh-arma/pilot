@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { Cloud } from "lucide-react";
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 
 export default function Home(props: { children: React.ReactNode }) {
   return (

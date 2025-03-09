@@ -2,6 +2,7 @@
 
 import { auth } from "@clerk/nextjs/server";
 import { UTApi } from "uploadthing/server";
+import { getErrorMessage } from "~/lib/utils/error-handling";
 import { Mutations } from "~/server/db/queries";
 
 const utApi = new UTApi();
@@ -42,6 +43,6 @@ export async function deleteFolderAction(folderId: bigint) {
       folder: { folderId, ownerId: user.userId },
     });
   } catch (error) {
-    throw new Error("Failed to delete folder");
+    throw new Error(`Failed to delete folder: ${getErrorMessage(error)}`);
   }
 }
