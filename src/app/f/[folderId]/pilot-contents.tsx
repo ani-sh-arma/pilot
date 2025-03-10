@@ -7,8 +7,9 @@ import { useState, useRef, useEffect } from "react";
 import { Breadcrumb } from "~/app/components/breadcrumb";
 import { UploadButton } from "~/app/components/uploadthing";
 import { CreateFolderButton } from "~/app/components/create-folder-button";
-import { FolderList, FileList } from "~/app/components/file-list";
+import { FileList } from "~/app/components/file-list";
 import { Cloud, MoreVertical } from "lucide-react";
+import { FolderList } from "~/app/components/folder-list";
 
 export default function PilotContents(props: {
   files: (typeof file_table.$inferSelect)[];

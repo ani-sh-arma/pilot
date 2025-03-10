@@ -175,4 +175,42 @@ export const Mutations = {
 
     return rootId;
   },
+  moveFolderTo: async function (input: {
+    folder: {
+      folderId: bigint;
+      ownerId: string;
+      newParentId: bigint;
+    };
+  }) {
+    return await db
+      .update(folderSchema)
+      .set({
+        parentId: input.folder.newParentId,
+      })
+      .where(
+        and(
+          eq(folderSchema.id, input.folder.folderId),
+          eq(folderSchema.ownerId, input.folder.ownerId),
+        ),
+      );
+  },
+  moveFileTo: async function (input: {
+    file: {
+      fileId: bigint;
+      ownerId: string;
+      newParentId: bigint;
+    };
+  }) {
+    return await db
+      .update(fileSchema)
+      .set({
+        parentId: input.file.newParentId,
+      })
+      .where(
+        and(
+          eq(fileSchema.id, input.file.fileId),
+          eq(fileSchema.ownerId, input.file.ownerId),
+        ),
+      );
+  },
 };
