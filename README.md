@@ -12,6 +12,7 @@
 - [x] Update data fetching so that only the logged in user's data is shown
 - [x] Create a default home directory for every user after registration
 - [x] Delete folder
+- [ ] Move to
 - [ ] Share file
 - [ ] Download file
 - [ ] Download as PDF
