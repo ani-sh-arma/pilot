@@ -6,7 +6,6 @@ import {
   Music,
   FileText,
   MoreVertical,
-  Share,
   Trash,
   Download,
   Loader2,
@@ -19,6 +18,7 @@ import {
   deleteFolderAction,
 } from "~/server/actions/file-actions";
 import { useRouter } from "next/navigation";
+import ShareButton from "./share-button";
 
 interface FileListProps {
   file: typeof file_table.$inferSelect;
@@ -113,10 +113,11 @@ export function FileList({ file }: FileListProps) {
               </div>
             ) : (
               <>
-                <button className="flex w-full items-center px-4 py-2 text-sm text-gray-200 hover:bg-gray-600">
-                  <Share className="mr-2 h-4 w-4" />
-                  Share
-                </button>
+                <ShareButton
+                  title={file.name ?? ""}
+                  text={""}
+                  url={file.url ?? ""}
+                />
                 <button className="flex w-full items-center px-4 py-2 text-sm text-gray-200 hover:bg-gray-600">
                   <Download className="mr-2 h-4 w-4" />
                   Download
