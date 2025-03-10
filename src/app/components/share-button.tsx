@@ -1,5 +1,6 @@
 import { Share } from "lucide-react";
 import React from "react";
+import { getErrorMessage } from "~/lib/utils/error-handling";
 
 interface ShareButtonProps {
   title: string;
@@ -17,9 +18,9 @@ const ShareButton: React.FC<ShareButtonProps> = ({ title, text, url }) => {
           url: url,
         });
         console.log("Shared successfully!");
-      } catch (error: any) {
-        console.error("Sharing failed:", error);
-        if (error.name === "AbortError") {
+      } catch (error) {
+        console.error("Sharing failed:", getErrorMessage(error));
+        if (error instanceof Error ? error.name === "AbortError" : false) {
           console.log("Sharing aborted."); // User cancelled the share
         }
       }
