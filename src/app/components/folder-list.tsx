@@ -6,6 +6,7 @@ import { deleteFolderAction } from "~/server/actions/file-actions";
 import { folder_table } from "~/server/db/schema";
 import { MoveModal } from "./move-modal";
 import { bigint } from "drizzle-orm/mysql-core";
+import { moveFolderToFolder } from "~/server/actions/move-actions";
 
 interface FolderListProps {
   folder: typeof folder_table.$inferSelect;
@@ -41,13 +42,23 @@ export function FolderList({ folder }: FolderListProps) {
     }
   };
 
+  const handleMove = async (newParentId: bigint) => {
+    try {
+      await moveFolderToFolder(folder.id, newParentId);
+      setIsModalOpen(false);
+      navigate.refresh();
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "Failed to move folder");
+    }
+  };
+
   return (
     <>
       {isModalOpen && (
         <MoveModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          onMove={async (folderId: bigint) => {}}
+          onMove={handleMove}
           currentFolderId={folder.id}
           title={`Move "${folder.name}" to:`}
           parentId={folder.parentId}

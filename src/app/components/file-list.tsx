@@ -16,6 +16,7 @@ import { deleteFileAction } from "~/server/actions/file-actions";
 import { useRouter } from "next/navigation";
 import ShareButton from "./share-button";
 import { MoveModal } from "./move-modal";
+import { moveFileToFolder } from "~/server/actions/move-actions";
 
 interface FileListProps {
   file: typeof file_table.$inferSelect;
@@ -79,13 +80,23 @@ export function FileList({ file }: FileListProps) {
     }
   };
 
+  const handleMove = async (newParentId: bigint) => {
+    try {
+      await moveFileToFolder(file.id, newParentId);
+      setIsModalOpen(false);
+      navigate.refresh();
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "Failed to move file");
+    }
+  };
+
   return (
     <>
       {isModalOpen && (
         <MoveModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          onMove={async (folderId: bigint) => {}}
+          onMove={handleMove}
           currentFolderId={file.parentId}
           title={`Move "${file.name}" to:`}
           parentId={file.parentId}
