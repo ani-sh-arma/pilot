@@ -13,7 +13,7 @@
 - [x] Create a default home directory for every user after registration
 - [x] Delete folder
 - [x] Share file
-- [ ] Move to
+- [x] Move to
 - [ ] Download file
 - [ ] Download as PDF
 - [ ] Toasts for errors and UI updates and notifications

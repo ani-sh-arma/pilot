@@ -13,8 +13,7 @@ export async function createFolderAction(folderName: string, parentId: number) {
 
     if (!folder) throw new AppError("Invalid folder id");
 
-    if (folder[0]?.ownerId !== user.userId)
-      throw new AppError("Unauthorized");
+    if (folder[0]?.ownerId !== user.userId) throw new AppError("Unauthorized");
 
     await Mutations.createFolder({
       folder: {
@@ -24,6 +23,23 @@ export async function createFolderAction(folderName: string, parentId: number) {
       },
     });
   } catch (error) {
-    throw new AppError(error instanceof Error ? error.message : 'Failed to create folder');
+    throw new AppError(
+      error instanceof Error ? error.message : "Failed to create folder",
+    );
+  }
+}
+
+export async function getFolderByIdAction(folderId: bigint) {
+  try {
+    const user = await auth();
+    if (!user.userId) throw new AppError("Unauthorized");
+
+    const folder = await Queries.getFolderById(BigInt(folderId));
+
+    return folder;
+  } catch (error) {
+    throw new AppError(
+      error instanceof Error ? error.message : "Failed to create folder",
+    );
   }
 }

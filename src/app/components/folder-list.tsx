@@ -3,9 +3,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { deleteFolderAction } from "~/server/actions/file-actions";
-import { folder_table } from "~/server/db/schema";
+import type { folder_table } from "~/server/db/schema";
 import { MoveModal } from "./move-modal";
-import { bigint } from "drizzle-orm/mysql-core";
 import { moveFolderToFolder } from "~/server/actions/move-actions";
 
 interface FolderListProps {
@@ -95,7 +94,10 @@ export function FolderList({ folder }: FolderListProps) {
               ) : (
                 <>
                   <button
-                    onClick={() => setIsModalOpen(true)}
+                    onClick={() => {
+                      setIsModalOpen(true);
+                      setShowMenu(false);
+                    }}
                     className="flex w-full items-center px-4 py-2 text-sm text-gray-200 hover:bg-gray-600"
                   >
                     <Move className="mr-2 h-4 w-4" />

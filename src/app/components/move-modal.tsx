@@ -2,6 +2,7 @@ import { X, Folder, ArrowLeft } from "lucide-react";
 import { getAllFolders } from "~/server/actions/move-file-action";
 import { useState, useEffect, useRef } from "react";
 import type { folder_table } from "~/server/db/schema";
+import { getFolderByIdAction } from "~/server/actions/folder-actions";
 
 interface MoveModalProps {
   isOpen: boolean;
@@ -23,6 +24,7 @@ export function MoveModal({
   const [selectedFolderId, setSelectedFolderId] = useState<bigint>(
     parentId ?? BigInt(0),
   );
+  const [showBack, setShowBack] = useState<boolean>(true);
   const [folders, setFolders] = useState<(typeof folder_table.$inferSelect)[]>(
     [],
   );
@@ -39,19 +41,22 @@ export function MoveModal({
     isFetching.current = true;
     lastFetchedId.current = folderId;
 
+    if (folderId === null) {
+      setShowBack(false);
+      return;
+    }
+
     console.log(`Fetching folders for folderId: ${folderId}`);
 
     try {
       const result = await getAllFolders(folderId ?? BigInt(0));
 
-      setFolders([...result[0]]);
-      setParents([...result[1]]);
+      const filteredFolders = result[0].filter(
+        (folder) => folder.id !== currentFolderId,
+      );
 
-      folders.forEach((folder) => {
-        if (folder.id === currentFolderId) {
-          return;
-        }
-      });
+      setFolders(filteredFolders);
+      setParents([...result[1]]);
 
       if (!hasUserNavigated.current) {
         setSelectedFolderId(folderId ?? BigInt(0)); // ✅ Only update if user didn't manually navigate
@@ -99,16 +104,21 @@ export function MoveModal({
         </div>
 
         {/* Breadcrumb Navigation */}
-        <div className="p-4">
-          <div
-            className="w-8 rounded-full p-1 hover:cursor-pointer hover:bg-slate-500 hover:text-black"
-            onClick={() => {
-              void loadFolders(currentFolderId);
-            }}
-          >
-            <ArrowLeft />
+        {showBack && (
+          <div className="p-4">
+            <div
+              className="w-8 rounded-full p-1 hover:cursor-pointer hover:bg-slate-500 hover:text-black"
+              onClick={async () => {
+                console.log("Loading folders for current folder");
+                const folder = await getFolderByIdAction(currentFolderId);
+                console.log("Folder:", folder[0]?.parentId);
+                void loadFolders(folder[0]?.parentId ?? null);
+              }}
+            >
+              <ArrowLeft />
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Folder Selection */}
         <div className="max-h-[40vh] overflow-y-auto p-4">
