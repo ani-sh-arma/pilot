@@ -1,7 +1,7 @@
 import { X, Folder } from "lucide-react";
 import { getAllFolders } from "~/server/actions/move-file-action";
 import { Breadcrumb } from "./breadcrumb";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { folder_table } from "~/server/db/schema";
 
 interface MoveModalProps {
@@ -29,25 +29,33 @@ export function MoveModal({
   const [parents, setParents] = useState<(typeof folder_table.$inferSelect)[]>(
     [],
   );
+  const [currentParent, setCurrentParent] = useState<bigint | null>(parentId);
+
+  const loadFolders = async (folderId: bigint | null) => {
+    const result = await getAllFolders(folderId ?? BigInt(0));
+    setFolders([...result[0]]);
+    setParents([...result[1]]);
+    setSelectedFolderId(folderId ?? BigInt(0));
+    setCurrentParent(folderId);
+  };
+
+  // Handle initial load and parentId changes
+  useEffect(() => {
+    if (isOpen) {
+      void loadFolders(parentId);
+    }
+  }, [isOpen, parentId]);
 
   if (!isOpen) return null;
 
-  const loadFolders = async (parentId: bigint | null) => {
-    console.log(`In load folders : ${parentId}`);
-
-    const result = await getAllFolders(parentId ?? BigInt(0));
-    console.log(`In load folders after result : ${result}`);
-    setFolders([...result[0]]);
-    console.log(`In load folders after setfolder : ${folders}`);
-    setParents([...result[1]]);
-    console.log(`In load folders after setparent : ${parents}`);
-    setSelectedFolderId(parentId ?? BigInt(0));
+  const handleFolderClick = (folder: typeof folder_table.$inferSelect) => {
+    if (folder.id === currentFolderId) return;
+    setSelectedFolderId(folder.id);
   };
 
-  // Initial load
-  if (folders.length === 0) {
-    void loadFolders(parentId);
-  }
+  const handleFolderDoubleClick = (folder: typeof folder_table.$inferSelect) => {
+    void loadFolders(folder.id);
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -75,14 +83,13 @@ export function MoveModal({
             {folders.map((folder) => (
               <div
                 key={folder.id}
-                className={`flex h-full cursor-pointer items-center rounded-lg p-3 transition-colors`}
-                onClick={() => {
-                  console.log(`Clicked Folder : ${folder.id}`);
-
-                  if (folder.id === currentFolderId) return;
-                  void loadFolders(folder.id);
-                  setSelectedFolderId(folder.id);
-                }}
+                className={`flex h-full cursor-pointer items-center rounded-lg p-3 transition-colors ${
+                  selectedFolderId === folder.id
+                    ? "bg-blue-600"
+                    : "bg-gray-800 hover:bg-gray-700"
+                }`}
+                onClick={() => handleFolderClick(folder)}
+                onDoubleClick={() => handleFolderDoubleClick(folder)}
               >
                 <Folder className="mr-3 h-5 w-5" />
                 <span className="text-sm">{folder.name}</span>
