@@ -14,22 +14,18 @@ export async function deleteFileAction(fileId: bigint, fileKey: string) {
       throw new Error("Unauthorized");
     }
 
+    await Mutations.deleteFile({
+      file: { fileId, ownerId: user.userId },
+    });
+
     if (fileKey !== "") {
       const res = await utApi.deleteFiles([fileKey]);
       console.log(res);
     } else {
       throw new Error("File key is empty");
     }
-
-    await Mutations.deleteFile({
-      file: { fileId, ownerId: user.userId },
-    });
   } catch (error) {
-    throw new Error(
-      error instanceof Error
-        ? `Failed to delete file: ${error.message}`
-        : "Failed to delete file",
-    );
+    throw new Error(getErrorMessage(error));
   }
 }
 
