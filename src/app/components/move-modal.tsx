@@ -1,8 +1,10 @@
 import { X, Folder, ArrowLeft } from "lucide-react";
-import { getAllFolders } from "~/server/actions/move-file-action";
 import { useState, useEffect, useCallback } from "react";
 import type { folder_table } from "~/server/db/schema";
-import { getFolderByIdAction } from "~/server/actions/folder-actions";
+import {
+  getAllFolders,
+  getFolderByIdAction,
+} from "~/server/actions/folder-actions";
 import { getErrorMessage } from "~/lib/utils/error-handling";
 
 interface MoveModalProps {

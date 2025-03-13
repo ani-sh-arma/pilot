@@ -117,10 +117,12 @@ export default function Home() {
                 Join thousands of users who trust Pilot for their storage needs.
               </p>
             </div>
-            <button className="flex items-center rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-4 text-lg font-medium text-white transition-all duration-300 hover:from-blue-500 hover:to-indigo-500 hover:shadow-[0_0_25px_rgba(79,70,229,0.5)]">
-              Start for Free
-              <Zap className="ml-2 h-5 w-5" />
-            </button>
+            <form action={getStartedAction}>
+              <button className="flex items-center rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-4 text-lg font-medium text-white transition-all duration-300 hover:from-blue-500 hover:to-indigo-500 hover:shadow-[0_0_25px_rgba(79,70,229,0.5)]">
+                Start for Free
+                <Zap className="ml-2 h-5 w-5" />
+              </button>
+            </form>
           </div>
         </div>
       </section>

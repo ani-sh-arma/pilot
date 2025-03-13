@@ -6,33 +6,24 @@ import { motion } from "framer-motion";
 export default function Loading() {
   return (
     <div className="flex h-screen w-full flex-col items-center justify-center bg-gray-900">
-      <div className="flex items-center gap-2">
-        <motion.div
-          animate={{
-            opacity: [0.5, 1, 0.5],
-          }}
-          transition={{
-            duration: 2,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        >
+      <motion.div
+        className="flex items-center gap-2"
+        animate={{
+          opacity: [0.5, 1, 0.5],
+        }}
+        transition={{
+          duration: 2,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+      >
+        <div>
           <Cloud className="h-10 w-10 text-blue-400" />
-        </motion.div>
-        <motion.span
-          className="bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-3xl font-bold text-transparent"
-          animate={{
-            opacity: [0.5, 1, 0.5],
-          }}
-          transition={{
-            duration: 2,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        >
+        </div>
+        <span className="bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-3xl font-bold text-transparent">
           Pilot
-        </motion.span>
-      </div>
+        </span>
+      </motion.div>
 
       <div className="mt-8 flex flex-col items-center gap-4">
         <motion.div

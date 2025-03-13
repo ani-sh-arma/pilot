@@ -15,13 +15,13 @@ export default function Home(props: { children: React.ReactNode }) {
         </div>
         <nav className="hidden items-center gap-6 md:flex">
           <Link
-            href="#features"
+            href="/#features"
             className="text-gray-300 transition-colors hover:text-white"
           >
             Features
           </Link>
           <Link
-            href="#features"
+            href="/#features"
             className="text-gray-300 transition-colors hover:text-white"
           >
             Pricing
