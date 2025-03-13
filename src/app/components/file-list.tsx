@@ -80,6 +80,32 @@ export function FileList({ file, parent }: FileListProps) {
     }
   };
 
+  const handleDownload = async () => {
+    if (!file.url) return;
+
+    try {
+      setIsDeleting(true);
+      const response = await fetch(file.url);
+      const blob = await response.blob();
+
+      // Create a temporary link to trigger download
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.download = file.name ?? "";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(downloadUrl);
+    } catch (error) {
+      console.error("Download failed:", error);
+      alert(error instanceof Error ? error.message : "Failed to download file");
+    } finally {
+      setIsDeleting(false);
+      setShowMenu(false);
+    }
+  };
+
   const handleMove = async (newParentId: bigint) => {
     try {
       await moveFileToFolder(file.id, newParentId);
@@ -98,7 +124,7 @@ export function FileList({ file, parent }: FileListProps) {
           onClose={() => setIsModalOpen(false)}
           onMove={handleMove}
           currentFolderId={file.parentId}
-          currentFileOrFolder = {file.name ?? ""}
+          currentFileOrFolder={file.name ?? ""}
           title={`Move "${file.name}" to: ${parent.name}`}
           parentId={file.parentId}
         />
@@ -131,7 +157,7 @@ export function FileList({ file, parent }: FileListProps) {
               {isDeleting ? (
                 <div className="flex items-center justify-center px-4 py-4 text-sm text-gray-200">
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Deleting...
+                  Loading...
                 </div>
               ) : (
                 <>
@@ -140,7 +166,10 @@ export function FileList({ file, parent }: FileListProps) {
                     text={""}
                     url={file.url ?? ""}
                   />
-                  <button className="flex w-full items-center px-4 py-2 text-sm text-gray-200 hover:bg-gray-600">
+                  <button
+                    className="flex w-full items-center px-4 py-2 text-sm text-gray-200 hover:bg-gray-600"
+                    onClick={handleDownload}
+                  >
                     <Download className="mr-2 h-4 w-4" />
                     Download
                   </button>
