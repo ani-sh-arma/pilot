@@ -4,6 +4,7 @@ import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { PostHogProvider } from "./_providers/posthog-provider";
+import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
   title: "Pilot",
@@ -18,7 +19,10 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" className={`${GeistSans.variable}`}>
         <PostHogProvider>
-          <body>{children}</body>
+          <body>
+            {children}
+            <Toaster position="bottom-right" />
+          </body>
         </PostHogProvider>
       </html>
     </ClerkProvider>

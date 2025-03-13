@@ -6,6 +6,7 @@ import { deleteFolderAction } from "~/server/actions/folder-actions";
 import type { folder_table } from "~/server/db/schema";
 import { MoveModal } from "./move-modal";
 import { moveFolderToFolder } from "~/server/actions/move-actions";
+import toast from "react-hot-toast";
 
 interface FolderListProps {
   folder: typeof folder_table.$inferSelect;
@@ -33,25 +34,45 @@ export function FolderList({ folder, parent }: FolderListProps) {
   }, []);
 
   const handleFolderDelete = async () => {
-    try {
-      setIsDeleting(true);
-      await deleteFolderAction(folder.id);
-      navigate.refresh();
-    } catch (error) {
-      setIsDeleting(false);
-      alert(error instanceof Error ? error.message : "Failed to delete file");
-    }
+    const deletePromise = (async () => {
+      try {
+        setIsDeleting(true);
+        await deleteFolderAction(folder.id);
+        navigate.refresh();
+        return "Folder deleted successfully";
+      } catch (error) {
+        throw error instanceof Error ? error.message : "Failed to delete folder";
+      } finally {
+        setIsDeleting(false);
+      }
+    })();
+
+    await toast.promise(deletePromise, {
+      loading: 'Deleting folder...',
+      success: (message) => message,
+      error: (error) => error,
+    });
   };
 
   const handleMove = async (newParentId: bigint) => {
-    try {
-      await moveFolderToFolder(folder.id, newParentId);
-      setIsModalOpen(false);
-      navigate.refresh();
-    } catch (error) {
-      alert(error instanceof Error ? error.message : "Failed to move folder");
-    }
+    const movePromise = (async () => {
+      try {
+        await moveFolderToFolder(folder.id, newParentId);
+        setIsModalOpen(false);
+        navigate.refresh();
+        return "Folder moved successfully";
+      } catch (error) {
+        throw error instanceof Error ? error.message : "Failed to move folder";
+      }
+    })();
+
+    await toast.promise(movePromise, {
+      loading: 'Moving folder...',
+      success: (message) => message,
+      error: (error) => error,
+    });
   };
+
 
   return (
     <>

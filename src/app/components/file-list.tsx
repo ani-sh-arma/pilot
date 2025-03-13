@@ -20,6 +20,7 @@ import { useRouter } from "next/navigation";
 import ShareButton from "./share-button";
 import { MoveModal } from "./move-modal";
 import { moveFileToFolder } from "~/server/actions/move-actions";
+import toast from "react-hot-toast";
 
 interface FileListProps {
   file: typeof file_table.$inferSelect;
@@ -73,82 +74,120 @@ export function FileList({ file, parent }: FileListProps) {
   };
 
   const handleDelete = async () => {
-    try {
-      setIsDeleting(true);
-      await deleteFileAction(file.id, file.fileKey ?? "");
-      navigate.refresh();
-    } catch (error) {
-      setIsDeleting(false);
-      alert(error instanceof Error ? error.message : "Failed to delete file");
-    }
+    const deletePromise = (async () => {
+      try {
+        setIsDeleting(true);
+        await deleteFileAction(file.id, file.fileKey ?? "");
+        navigate.refresh();
+        return "File deleted successfully";
+      } catch (error) {
+        throw error instanceof Error ? error.message : "Failed to delete file";
+      } finally {
+        setIsDeleting(false);
+      }
+    })();
+
+    await toast.promise(deletePromise, {
+      loading: "Deleting file...",
+      success: (message) => message,
+      error: (error) => error,
+    });
   };
 
   const handleDownload = async () => {
     if (!file.url) return;
 
-    try {
-      setIsDeleting(true);
-      const response = await fetch(file.url);
-      const blob = await response.blob();
+    const downloadPromise = (async () => {
+      try {
+        setIsDeleting(true);
+        const response = await fetch(file.url ?? "");
+        const blob = await response.blob();
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = downloadUrl;
+        link.download = file.name ?? "";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(downloadUrl);
+        return "File downloaded successfully";
+      } catch (error) {
+        throw error instanceof Error
+          ? error.message
+          : "Failed to download file";
+      } finally {
+        setIsDeleting(false);
+        setShowMenu(false);
+      }
+    })();
 
-      // Create a temporary link to trigger download
-      const downloadUrl = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = downloadUrl;
-      link.download = file.name ?? "";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(downloadUrl);
-    } catch (error) {
-      console.error("Download failed:", error);
-      alert(error instanceof Error ? error.message : "Failed to download file");
-    } finally {
-      setIsDeleting(false);
-      setShowMenu(false);
-    }
+    await toast.promise(downloadPromise, {
+      loading: "Downloading file...",
+      success: (message) => message,
+      error: (error) => error,
+    });
   };
 
   const handleDownloadAsPdf = async () => {
     if (!file.url) return;
 
-    try {
-      setIsDeleting(true);
-      const base64Pdf = await convertToPdfAction(file.url, file.type ?? "");
+    const downloadAsPdfPromise = (async () => {
+      try {
+        setIsDeleting(true);
+        const base64Pdf = await convertToPdfAction(
+          file.url ?? "",
+          file.type ?? "",
+        );
 
-      // Convert base64 to blob
-      const binaryStr = window.atob(base64Pdf);
-      const bytes = new Uint8Array(binaryStr.length);
-      for (let i = 0; i < binaryStr.length; i++) {
-        bytes[i] = binaryStr.charCodeAt(i);
+        // Convert base64 to blob
+        const binaryStr = window.atob(base64Pdf);
+        const bytes = new Uint8Array(binaryStr.length);
+        for (let i = 0; i < binaryStr.length; i++) {
+          bytes[i] = binaryStr.charCodeAt(i);
+        }
+        const blob = new Blob([bytes], { type: "application/pdf" });
+
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = downloadUrl;
+        link.download = `${file.name?.split(".")[0] ?? "download"}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(downloadUrl);
+        return "File downloaded as PDF successfully"; // Add return message
+      } catch (error) {
+        throw error instanceof Error ? error.message : "Failed to download PDF";
+      } finally {
+        setIsDeleting(false);
+        setShowMenu(false);
       }
-      const blob = new Blob([bytes], { type: "application/pdf" });
+    })();
 
-      const downloadUrl = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = downloadUrl;
-      link.download = `${file.name?.split(".")[0] ?? "download"}.pdf`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(downloadUrl);
-    } catch (error) {
-      console.error("PDF download failed:", error);
-      alert(error instanceof Error ? error.message : "Failed to download PDF");
-    } finally {
-      setIsDeleting(false);
-      setShowMenu(false);
-    }
+    await toast.promise(downloadAsPdfPromise, {
+      loading: "Converting and downloading as PDF...",
+      success: (message) => message,
+      error: (error) => error,
+    });
   };
 
   const handleMove = async (newParentId: bigint) => {
-    try {
-      await moveFileToFolder(file.id, newParentId);
-      setIsModalOpen(false);
-      navigate.refresh();
-    } catch (error) {
-      alert(error instanceof Error ? error.message : "Failed to move file");
-    }
+    const movePromise = (async () => {
+      try {
+        await moveFileToFolder(file.id, newParentId);
+        setIsModalOpen(false);
+        navigate.refresh();
+        return "File moved successfully";
+      } catch (error) {
+        throw error instanceof Error ? error.message : "Failed to move file";
+      }
+    })();
+
+    await toast.promise(movePromise, {
+      loading: "Moving file...",
+      success: (message) => message,
+      error: (error) => error,
+    });
   };
 
   return (

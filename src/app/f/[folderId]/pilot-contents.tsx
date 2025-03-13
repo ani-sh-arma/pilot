@@ -10,6 +10,8 @@ import { CreateFolderButton } from "~/app/components/create-folder-button";
 import { FileList } from "~/app/components/file-list";
 import { Cloud, MoreVertical } from "lucide-react";
 import { FolderList } from "~/app/components/folder-list";
+import toast from "react-hot-toast";
+import { getErrorMessage } from "~/lib/utils/error-handling";
 
 export default function PilotContents(props: {
   files: (typeof file_table.$inferSelect)[];
@@ -35,6 +37,10 @@ export default function PilotContents(props: {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const handleUploadError = (error: Error) => {
+    toast.error(getErrorMessage(error));
+  };
 
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100">
@@ -70,15 +76,10 @@ export default function PilotContents(props: {
                     endpoint={"pilotUploader"}
                     onClientUploadComplete={() => {
                       navigate.refresh();
+                      toast.success("Files uploaded successfully");
                       setShowMobileMenu(false);
                     }}
-                    onUploadError={(error) => {
-                      setError(
-                        error instanceof Error
-                          ? error.message
-                          : "Upload failed",
-                      );
-                    }}
+                    onUploadError={handleUploadError}
                     input={{ folderId: Number(props.folder.id) }}
                   />
                 </div>
