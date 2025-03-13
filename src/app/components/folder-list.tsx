@@ -1,6 +1,6 @@
 import { Folder, Loader2, MoreVertical, Move, Trash } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { deleteFolderAction } from "~/server/actions/folder-actions";
 import type { folder_table } from "~/server/db/schema";
@@ -22,7 +22,15 @@ export function FolderList({ folder, parent }: FolderListProps) {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const [isNavigating, setIsNavigating] = useState(false);
   const navigate = useRouter();
+  const pathname = usePathname();
+
+  const handleFolderClick = (e: React.MouseEvent) => {
+    // e.preventDefault();
+    setIsNavigating(true);
+    navigate.push(`/f/${folder.id}`);
+  };
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -93,10 +101,20 @@ export function FolderList({ folder, parent }: FolderListProps) {
       >
         <Link
           href={`/f/${folder.id}`}
+          onClick={handleFolderClick}
           className="flex flex-grow text-lg font-medium text-gray-100 hover:text-blue-400"
         >
           <Folder className="h-6 w-6 text-yellow-400" />
-          <div className="ml-4 flex-grow">{folder.name}</div>
+          <div className="ml-4 flex-grow">
+            {isNavigating ? (
+              <div className="flex items-center gap-2">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>Opening...</span>
+              </div>
+            ) : (
+              folder.name
+            )}
+          </div>
         </Link>
         <div className="relative" ref={menuRef}>
           <button

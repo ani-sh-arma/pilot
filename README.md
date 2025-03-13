@@ -16,6 +16,6 @@
 - [x] Move to
 - [x] Download file
 - [x] Download as PDF
-- [ ] Toasts for errors and UI updates and notifications
+- [x] Toasts for errors and UI updates and notifications
 - [ ] Add text file creation and updation.
 - [ ] File view page
