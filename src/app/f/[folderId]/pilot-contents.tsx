@@ -15,7 +15,7 @@ export default function PilotContents(props: {
   files: (typeof file_table.$inferSelect)[];
   folders: (typeof folder_table.$inferSelect)[];
   parents: (typeof folder_table.$inferSelect)[];
-  folderId: number;
+  folder: typeof folder_table.$inferSelect;
 }) {
   const [error, setError] = useState("");
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -79,12 +79,12 @@ export default function PilotContents(props: {
                           : "Upload failed",
                       );
                     }}
-                    input={{ folderId: props.folderId }}
+                    input={{ folderId: Number(props.folder.id) }}
                   />
                 </div>
                 <div className="px-4 py-2">
                   <CreateFolderButton
-                    parentId={props.folderId}
+                    parentId={Number(props.folder.id)}
                     onCreated={() => {
                       navigate.refresh();
                       setShowMobileMenu(false);
@@ -113,10 +113,10 @@ export default function PilotContents(props: {
                     error instanceof Error ? error.message : "Upload failed",
                   );
                 }}
-                input={{ folderId: props.folderId }}
+                input={{ folderId: Number(props.folder.id) }}
               />
               <CreateFolderButton
-                parentId={props.folderId}
+                parentId={Number(props.folder.id)}
                 onCreated={() => {
                   navigate.refresh();
                 }}
@@ -138,10 +138,10 @@ export default function PilotContents(props: {
             <h1 className="text-gray-500">{"No files or folders"}</h1>
           )}
           {props.folders.map((folder) => (
-            <FolderList folder={folder} key={folder.id} />
+            <FolderList folder={folder} key={folder.id} parent={props.folder} />
           ))}
           {props.files.map((file) => (
-            <FileList file={file} key={file.id} />
+            <FileList file={file} key={file.id} parent={props.folder} />
           ))}
         </div>
       </div>

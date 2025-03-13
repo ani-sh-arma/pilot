@@ -9,9 +9,11 @@ import { moveFolderToFolder } from "~/server/actions/move-actions";
 
 interface FolderListProps {
   folder: typeof folder_table.$inferSelect;
+
+  parent: typeof folder_table.$inferSelect;
 }
 
-export function FolderList({ folder }: FolderListProps) {
+export function FolderList({ folder, parent }: FolderListProps) {
   const [showMenu, setShowMenu] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -59,7 +61,8 @@ export function FolderList({ folder }: FolderListProps) {
           onClose={() => setIsModalOpen(false)}
           onMove={handleMove}
           currentFolderId={folder.id}
-          title={`Move "${folder.name}" to:`}
+          currentFileOrFolder={folder.name ?? ""}
+          title={`Move "${folder.name}" to: ${parent.name}`}
           parentId={folder.parentId}
         />
       )}

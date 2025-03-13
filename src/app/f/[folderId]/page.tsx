@@ -45,7 +45,7 @@ export default async function Pilot(props: {
         files={files}
         folders={folders}
         parents={parents}
-        folderId={safeFolderId}
+        folder={folder[0]}
       />
     );
   } catch (e) {

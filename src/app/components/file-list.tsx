@@ -11,7 +11,7 @@ import {
   Move,
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
-import type { file_table } from "~/server/db/schema";
+import type { file_table, folder_table } from "~/server/db/schema";
 import { deleteFileAction } from "~/server/actions/file-actions";
 import { useRouter } from "next/navigation";
 import ShareButton from "./share-button";
@@ -20,9 +20,10 @@ import { moveFileToFolder } from "~/server/actions/move-actions";
 
 interface FileListProps {
   file: typeof file_table.$inferSelect;
+  parent: typeof folder_table.$inferSelect;
 }
 
-export function FileList({ file }: FileListProps) {
+export function FileList({ file, parent }: FileListProps) {
   const [showMenu, setShowMenu] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -58,7 +59,6 @@ export function FileList({ file }: FileListProps) {
       case "doc":
         return <FileText className="h-6 w-6 text-blue-400" />;
       case "image":
-        // eslint-disable-next-line @typescript-eslint/only-throw-error
         return <Image className="h-6 w-6 text-green-400" />;
       case "video":
         return <Video className="h-6 w-6 text-red-400" />;
@@ -98,7 +98,8 @@ export function FileList({ file }: FileListProps) {
           onClose={() => setIsModalOpen(false)}
           onMove={handleMove}
           currentFolderId={file.parentId}
-          title={`Move "${file.name}" to:`}
+          currentFileOrFolder = {file.name ?? ""}
+          title={`Move "${file.name}" to: ${parent.name}`}
           parentId={file.parentId}
         />
       )}

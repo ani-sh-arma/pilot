@@ -1,8 +1,9 @@
 import { X, Folder, ArrowLeft } from "lucide-react";
 import { getAllFolders } from "~/server/actions/move-file-action";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import type { folder_table } from "~/server/db/schema";
 import { getFolderByIdAction } from "~/server/actions/folder-actions";
+import { getErrorMessage } from "~/lib/utils/error-handling";
 
 interface MoveModalProps {
   isOpen: boolean;
@@ -10,6 +11,7 @@ interface MoveModalProps {
   onMove: (folderId: bigint) => Promise<void>;
   title?: string;
   currentFolderId: bigint;
+  currentFileOrFolder: string;
   parentId: bigint | null;
 }
 
@@ -19,64 +21,50 @@ export function MoveModal({
   onMove,
   title = "Select New Parent",
   currentFolderId,
+  currentFileOrFolder,
   parentId,
 }: MoveModalProps) {
   const [selectedFolderId, setSelectedFolderId] = useState<bigint>(
     parentId ?? BigInt(0),
   );
+
+  const [dialogueTitle, setDialogueTitle] = useState<string>(title);
   const [showBack, setShowBack] = useState<boolean>(true);
   const [folders, setFolders] = useState<(typeof folder_table.$inferSelect)[]>(
     [],
   );
-  const [parents, setParents] = useState<(typeof folder_table.$inferSelect)[]>(
-    [],
-  );
 
-  const isFetching = useRef(false);
-  const lastFetchedId = useRef<bigint | null>(null);
-  const hasUserNavigated = useRef(false);
-
-  const loadFolders = async (folderId: bigint | null) => {
-    if (isFetching.current || lastFetchedId.current === folderId) return;
-    isFetching.current = true;
-    lastFetchedId.current = folderId;
-
-    if (folderId === null) {
-      setShowBack(false);
-      return;
-    }
-
-    console.log(`Fetching folders for folderId: ${folderId}`);
-
-    try {
-      const result = await getAllFolders(folderId ?? BigInt(0));
-
-      const filteredFolders = result[0].filter(
-        (folder) => folder.id !== currentFolderId,
-      );
-
-      setFolders(filteredFolders);
-      setParents([...result[1]]);
-
-      if (!hasUserNavigated.current) {
-        setSelectedFolderId(folderId ?? BigInt(0)); // ✅ Only update if user didn't manually navigate
+  const loadFolders = useCallback(
+    async (folderId: bigint | null) => {
+      if (folderId === null) {
+        setShowBack(false);
+        return;
       }
-    } catch (error) {
-      console.error("Error fetching folders:", error);
-    } finally {
-      isFetching.current = false;
-    }
-  };
+
+      console.log(`Fetching folders for folderId: ${folderId}`);
+
+      try {
+        const result = await getAllFolders(folderId ?? BigInt(0));
+
+        const filteredFolders = result[0].filter(
+          (folder) => folder.id !== currentFolderId,
+        );
+
+        setFolders(filteredFolders);
+        setSelectedFolderId(folderId ?? BigInt(0));
+      } catch (error) {
+        console.error("Error fetching folders:", error);
+      }
+    },
+    [currentFolderId],
+  );
 
   // Load folders when modal opens, but do NOT override user navigation
   useEffect(() => {
-    if (isOpen && !hasUserNavigated.current) {
-      void loadFolders(parentId);
-    }
-  }, [isOpen, parentId]);
+    void loadFolders(parentId);
+  }, [isOpen, parentId, loadFolders]);
 
   if (!isOpen) {
-    hasUserNavigated.current = false;
     return null;
   }
 
@@ -84,9 +72,9 @@ export function MoveModal({
     if (folder.id === currentFolderId) return;
 
     console.log(`Navigating to folder: ${folder.id}`);
-    hasUserNavigated.current = true;
     setSelectedFolderId(folder.id);
     void loadFolders(folder.id);
+    setDialogueTitle(`Move "${currentFileOrFolder}" to : ${folder.name}`);
   };
 
   return (
@@ -94,7 +82,7 @@ export function MoveModal({
       <div className="fixed inset-0 bg-black opacity-50" onClick={onClose} />
       <div className="relative z-50 mt-[20vh] h-[80vh] w-[480px] overflow-hidden rounded-lg bg-neutral-900 shadow-lg">
         <div className="flex items-center justify-between border-b border-gray-700 p-4">
-          <h2 className="text-lg font-semibold">{title}</h2>
+          <h2 className="text-lg font-semibold">{dialogueTitle}</h2>
           <button
             onClick={onClose}
             className="text-gray-500 hover:text-gray-400"
@@ -109,10 +97,20 @@ export function MoveModal({
             <div
               className="w-8 rounded-full p-1 hover:cursor-pointer hover:bg-slate-500 hover:text-black"
               onClick={async () => {
-                console.log("Loading folders for current folder");
-                const folder = await getFolderByIdAction(currentFolderId);
-                console.log("Folder:", folder[0]?.parentId);
-                void loadFolders(folder[0]?.parentId ?? null);
+                try {
+                  console.log("Loading folders for current folder");
+                  const folder = await getFolderByIdAction(selectedFolderId);
+                  console.log("Folder:", folder[0]?.parentId);
+                  void loadFolders(folder[0]?.parentId ?? null);
+                  const parentFolder = await getFolderByIdAction(
+                    folder[0]?.parentId ?? BigInt(0),
+                  );
+                  setDialogueTitle(
+                    `Move "${currentFileOrFolder}" to : ${parentFolder[0]?.name}`,
+                  );
+                } catch (e) {
+                  console.log(`Error: ${getErrorMessage(e)}`);
+                }
               }}
             >
               <ArrowLeft />
