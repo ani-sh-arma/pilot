@@ -21,6 +21,7 @@ import ShareButton from "./share-button";
 import { MoveModal } from "./move-modal";
 import { moveFileToFolder } from "~/server/actions/move-actions";
 import toast from "react-hot-toast";
+import { getErrorMessage } from "~/lib/utils/error-handling";
 
 interface FileListProps {
   file: typeof file_table.$inferSelect;
@@ -81,7 +82,7 @@ export function FileList({ file, parent }: FileListProps) {
         navigate.refresh();
         return "File deleted successfully";
       } catch (error) {
-        throw error instanceof Error ? error.message : "Failed to delete file";
+        throw new Error(getErrorMessage(error));
       } finally {
         setIsDeleting(false);
       }
@@ -90,7 +91,7 @@ export function FileList({ file, parent }: FileListProps) {
     await toast.promise(deletePromise, {
       loading: "Deleting file...",
       success: (message) => message,
-      error: (error) => error,
+      error: (error) => getErrorMessage(error),
     });
   };
 
@@ -112,9 +113,7 @@ export function FileList({ file, parent }: FileListProps) {
         window.URL.revokeObjectURL(downloadUrl);
         return "File downloaded successfully";
       } catch (error) {
-        throw error instanceof Error
-          ? error.message
-          : "Failed to download file";
+        throw new Error(getErrorMessage(error));
       } finally {
         setIsDeleting(false);
         setShowMenu(false);
@@ -124,7 +123,7 @@ export function FileList({ file, parent }: FileListProps) {
     await toast.promise(downloadPromise, {
       loading: "Downloading file...",
       success: (message) => message,
-      error: (error) => error,
+      error: (error) => getErrorMessage(error),
     });
   };
 
@@ -157,7 +156,7 @@ export function FileList({ file, parent }: FileListProps) {
         window.URL.revokeObjectURL(downloadUrl);
         return "File downloaded as PDF successfully"; // Add return message
       } catch (error) {
-        throw error instanceof Error ? error.message : "Failed to download PDF";
+        throw new Error(getErrorMessage(error));
       } finally {
         setIsDeleting(false);
         setShowMenu(false);
@@ -167,7 +166,7 @@ export function FileList({ file, parent }: FileListProps) {
     await toast.promise(downloadAsPdfPromise, {
       loading: "Converting and downloading as PDF...",
       success: (message) => message,
-      error: (error) => error,
+      error: (error) => getErrorMessage(error),
     });
   };
 
@@ -179,14 +178,14 @@ export function FileList({ file, parent }: FileListProps) {
         navigate.refresh();
         return "File moved successfully";
       } catch (error) {
-        throw error instanceof Error ? error.message : "Failed to move file";
+        throw new Error(getErrorMessage(error));
       }
     })();
 
     await toast.promise(movePromise, {
       loading: "Moving file...",
       success: (message) => message,
-      error: (error) => error,
+      error: (error) => getErrorMessage(error),
     });
   };
 

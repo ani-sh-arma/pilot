@@ -7,6 +7,7 @@ import type { folder_table } from "~/server/db/schema";
 import { MoveModal } from "./move-modal";
 import { moveFolderToFolder } from "~/server/actions/move-actions";
 import toast from "react-hot-toast";
+import { getErrorMessage } from "~/lib/utils/error-handling";
 
 interface FolderListProps {
   folder: typeof folder_table.$inferSelect;
@@ -41,16 +42,16 @@ export function FolderList({ folder, parent }: FolderListProps) {
         navigate.refresh();
         return "Folder deleted successfully";
       } catch (error) {
-        throw error instanceof Error ? error.message : "Failed to delete folder";
+        throw new Error(getErrorMessage(error));
       } finally {
         setIsDeleting(false);
       }
     })();
 
     await toast.promise(deletePromise, {
-      loading: 'Deleting folder...',
+      loading: "Deleting folder...",
       success: (message) => message,
-      error: (error) => error,
+      error: (error) => getErrorMessage(error),
     });
   };
 
@@ -62,17 +63,16 @@ export function FolderList({ folder, parent }: FolderListProps) {
         navigate.refresh();
         return "Folder moved successfully";
       } catch (error) {
-        throw error instanceof Error ? error.message : "Failed to move folder";
+        throw new Error(getErrorMessage(error));
       }
     })();
 
     await toast.promise(movePromise, {
-      loading: 'Moving folder...',
+      loading: "Moving folder...",
       success: (message) => message,
-      error: (error) => error,
+      error: (error) => getErrorMessage(error),
     });
   };
-
 
   return (
     <>
