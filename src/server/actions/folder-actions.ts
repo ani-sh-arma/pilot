@@ -1,7 +1,7 @@
 "use server";
 
 import { auth } from "@clerk/nextjs/server";
-import { AppError } from "~/lib/utils/error-handling";
+import { AppError, getErrorMessage } from "~/lib/utils/error-handling";
 import { Mutations, Queries } from "~/server/db/queries";
 
 export async function createFolderAction(folderName: string, parentId: number) {
@@ -26,6 +26,20 @@ export async function createFolderAction(folderName: string, parentId: number) {
     throw new AppError(
       error instanceof Error ? error.message : "Failed to create folder",
     );
+  }
+}
+
+export async function deleteFolderAction(folderId: bigint) {
+  try {
+    const user = await auth();
+    if (!user.userId) {
+      throw new Error("Unauthorized");
+    }
+    await Mutations.deleteFolder({
+      folder: { folderId, ownerId: user.userId },
+    });
+  } catch (error) {
+    throw new Error(`Failed to delete folder: ${getErrorMessage(error)}`);
   }
 }
 

@@ -14,8 +14,8 @@
 - [x] Delete folder
 - [x] Share file
 - [x] Move to
-- [ ] Download file
-- [ ] Download as PDF
+- [x] Download file
+- [x] Download as PDF
 - [ ] Toasts for errors and UI updates and notifications
 - [ ] Add text file creation and updation.
 - [ ] File view page

@@ -12,7 +12,10 @@ import {
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import type { file_table, folder_table } from "~/server/db/schema";
-import { deleteFileAction } from "~/server/actions/file-actions";
+import {
+  convertToPdfAction,
+  deleteFileAction,
+} from "~/server/actions/file-actions";
 import { useRouter } from "next/navigation";
 import ShareButton from "./share-button";
 import { MoveModal } from "./move-modal";
@@ -106,6 +109,38 @@ export function FileList({ file, parent }: FileListProps) {
     }
   };
 
+  const handleDownloadAsPdf = async () => {
+    if (!file.url) return;
+
+    try {
+      setIsDeleting(true);
+      const base64Pdf = await convertToPdfAction(file.url, file.type ?? "");
+
+      // Convert base64 to blob
+      const binaryStr = window.atob(base64Pdf);
+      const bytes = new Uint8Array(binaryStr.length);
+      for (let i = 0; i < binaryStr.length; i++) {
+        bytes[i] = binaryStr.charCodeAt(i);
+      }
+      const blob = new Blob([bytes], { type: "application/pdf" });
+
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.download = `${file.name?.split(".")[0] ?? "download"}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(downloadUrl);
+    } catch (error) {
+      console.error("PDF download failed:", error);
+      alert(error instanceof Error ? error.message : "Failed to download PDF");
+    } finally {
+      setIsDeleting(false);
+      setShowMenu(false);
+    }
+  };
+
   const handleMove = async (newParentId: bigint) => {
     try {
       await moveFileToFolder(file.id, newParentId);
@@ -172,6 +207,13 @@ export function FileList({ file, parent }: FileListProps) {
                   >
                     <Download className="mr-2 h-4 w-4" />
                     Download
+                  </button>
+                  <button
+                    className="flex w-full items-center px-4 py-2 text-sm text-gray-200 hover:bg-gray-600"
+                    onClick={handleDownloadAsPdf}
+                  >
+                    <Download className="mr-2 h-4 w-4" />
+                    Download as PDF
                   </button>
                   <button
                     onClick={() => {

@@ -2,7 +2,7 @@ import { Folder, Loader2, MoreVertical, Move, Trash } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { deleteFolderAction } from "~/server/actions/file-actions";
+import { deleteFolderAction } from "~/server/actions/folder-actions";
 import type { folder_table } from "~/server/db/schema";
 import { MoveModal } from "./move-modal";
 import { moveFolderToFolder } from "~/server/actions/move-actions";
