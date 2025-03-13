@@ -85,6 +85,7 @@ export function FileList({ file, parent }: FileListProps) {
         throw new Error(getErrorMessage(error));
       } finally {
         setIsDeleting(false);
+        setShowMenu(false);
       }
     })();
 
@@ -154,7 +155,7 @@ export function FileList({ file, parent }: FileListProps) {
         link.click();
         document.body.removeChild(link);
         window.URL.revokeObjectURL(downloadUrl);
-        return "File downloaded as PDF successfully"; // Add return message
+        return "File downloaded as PDF successfully";
       } catch (error) {
         throw new Error(getErrorMessage(error));
       } finally {
@@ -175,7 +176,9 @@ export function FileList({ file, parent }: FileListProps) {
       try {
         await moveFileToFolder(file.id, newParentId);
         setIsModalOpen(false);
+        setShowMenu(false);
         navigate.refresh();
+
         return "File moved successfully";
       } catch (error) {
         throw new Error(getErrorMessage(error));

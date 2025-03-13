@@ -4,23 +4,37 @@ import { Plus, X } from "lucide-react";
 import { useState } from "react";
 import { createFolderAction } from "~/server/actions/folder-actions";
 import { getErrorMessage } from "~/lib/utils/error-handling";
+import CustomLoader from "./custom-loader";
+import toast from "react-hot-toast";
 
 export function CreateFolderButton(props: {
   parentId: number;
   onCreated: () => void;
 }) {
+  const [createFolderLoading, setCreateFolderLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [folderName, setFolderName] = useState("");
 
   const handleCreateFolder = async () => {
-    try {
-      await createFolderAction(folderName, props.parentId);
-      props.onCreated();
-      setFolderName("");
-      setIsModalOpen(false);
-    } catch (e) {
-      alert(getErrorMessage(e));
-    }
+    setCreateFolderLoading(true);
+    const createFolderPromise = async () => {
+      try {
+        await createFolderAction(folderName, props.parentId);
+        props.onCreated();
+        setFolderName("");
+        setIsModalOpen(false);
+
+        return "Folder Created";
+      } catch (e) {
+        throw new Error(getErrorMessage(e));
+      }
+    };
+    setCreateFolderLoading(false);
+    await toast.promise(createFolderPromise, {
+      loading: "Creating Folder...",
+      success: (message) => message,
+      error: (error) => getErrorMessage(error),
+    });
   };
 
   return (
@@ -63,12 +77,16 @@ export function CreateFolderButton(props: {
               }}
               className="mb-4 w-full rounded-md border border-gray-300 p-2 text-black focus:border-blue-500 focus:outline-none"
             />
-            <button
-              onClick={handleCreateFolder}
-              className="w-full rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-            >
-              Create Folder
-            </button>
+            {createFolderLoading ? (
+              <CustomLoader />
+            ) : (
+              <button
+                onClick={handleCreateFolder}
+                className="w-full rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+              >
+                {"Create Folder"}
+              </button>
+            )}
           </div>
         </div>
       )}

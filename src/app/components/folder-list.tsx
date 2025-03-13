@@ -1,6 +1,6 @@
 import { Folder, Loader2, MoreVertical, Move, Trash } from "lucide-react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { deleteFolderAction } from "~/server/actions/folder-actions";
 import type { folder_table } from "~/server/db/schema";
@@ -24,10 +24,8 @@ export function FolderList({ folder, parent }: FolderListProps) {
 
   const [isNavigating, setIsNavigating] = useState(false);
   const navigate = useRouter();
-  const pathname = usePathname();
 
-  const handleFolderClick = (e: React.MouseEvent) => {
-    // e.preventDefault();
+  const handleFolderClick = () => {
     setIsNavigating(true);
     navigate.push(`/f/${folder.id}`);
   };
@@ -53,6 +51,7 @@ export function FolderList({ folder, parent }: FolderListProps) {
         throw new Error(getErrorMessage(error));
       } finally {
         setIsDeleting(false);
+        setShowMenu(false);
       }
     })();
 
@@ -69,6 +68,7 @@ export function FolderList({ folder, parent }: FolderListProps) {
         await moveFolderToFolder(folder.id, newParentId);
         setIsModalOpen(false);
         navigate.refresh();
+        setShowMenu(false);
         return "Folder moved successfully";
       } catch (error) {
         throw new Error(getErrorMessage(error));

@@ -2,6 +2,7 @@
 
 import { Cloud } from "lucide-react";
 import { motion } from "framer-motion";
+import CustomLoader from "~/app/components/custom-loader";
 
 export function LoadingUI({ rootId }: { rootId: string }) {
   return (
@@ -25,33 +26,8 @@ export function LoadingUI({ rootId }: { rootId: string }) {
             Pilot
           </span>
         </motion.div>
-
-        <div className="mt-8 flex flex-col items-center gap-4">
-          <motion.div
-            className="flex gap-2"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            {[...Array(3)].map((_, i) => (
-              <motion.div
-                key={i}
-                className="h-4 w-4 rounded-full bg-blue-400"
-                animate={{
-                  y: [-10, 10, -10],
-                  opacity: [0.5, 1, 0.5],
-                }}
-                transition={{
-                  duration: 1,
-                  repeat: Infinity,
-                  delay: i * 0.2,
-                  ease: "easeInOut",
-                }}
-              />
-            ))}
-          </motion.div>
-          <p className="text-lg text-gray-300">Preparing your workspace...</p>
-        </div>
+        <CustomLoader />
+        <p className="text-lg text-gray-300">Preparing your workspace...</p>
       </div>
       <div className="mt-12">
         <meta httpEquiv="refresh" content={`0;url=/f/${rootId}`} />
