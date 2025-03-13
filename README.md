@@ -17,5 +17,6 @@
 - [x] Download file
 - [x] Download as PDF
 - [x] Toasts for errors and UI updates and notifications
+- [ ] Fix download as pdf for files that are already pdfs
 - [ ] Add text file creation and updation.
 - [ ] File view page
