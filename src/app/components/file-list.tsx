@@ -133,11 +133,18 @@ export function FileList({ file, parent }: FileListProps) {
 
     const downloadAsPdfPromise = (async () => {
       try {
+        const fileType =
+          file.name?.split(".")[file.name?.split(".").length - 1];
         setIsDeleting(true);
         const base64Pdf = await convertToPdfAction(
           file.url ?? "",
-          file.type ?? "",
+          fileType === "pdf" || fileType === "PDF" ? "pdf" : (file.type ?? ""),
         );
+
+        if (base64Pdf.startsWith("https://")) {
+          handleDownload();
+          return;
+        }
 
         // Convert base64 to blob
         const binaryStr = window.atob(base64Pdf);
@@ -166,7 +173,7 @@ export function FileList({ file, parent }: FileListProps) {
 
     await toast.promise(downloadAsPdfPromise, {
       loading: "Converting and downloading as PDF...",
-      success: (message) => message,
+      success: (message) => message ?? "",
       error: (error) => getErrorMessage(error),
     });
   };
