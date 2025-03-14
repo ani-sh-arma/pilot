@@ -96,6 +96,18 @@ export const Mutations = {
   }) {
     return await db.insert(folderSchema).values(input.folder);
   },
+  renameFolder: async function (input: {
+    folder: {
+      name: string;
+      folderId: bigint;
+    };
+  }) {
+    const ans = await db
+      .update(folderSchema)
+      .set({ name: input.folder.name })
+      .where(eq(folderSchema.id, input.folder.folderId));
+    return ans;
+  },
   deleteFolder: async function (input: {
     folder: {
       folderId: bigint;

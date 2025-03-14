@@ -1,13 +1,25 @@
-import { Folder, Loader2, MoreVertical, Move, Trash } from "lucide-react";
+import {
+  Folder,
+  Loader2,
+  MoreVertical,
+  Move,
+  Trash,
+  Edit,
+  X,
+} from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { deleteFolderAction } from "~/server/actions/folder-actions";
+import {
+  deleteFolderAction,
+  renameFolderAction,
+} from "~/server/actions/folder-actions";
 import type { folder_table } from "~/server/db/schema";
 import { MoveModal } from "./move-modal";
 import { moveFolderToFolder } from "~/server/actions/move-actions";
 import toast from "react-hot-toast";
 import { getErrorMessage } from "~/lib/utils/error-handling";
+import CustomLoader from "./custom-loader";
 
 interface FolderListProps {
   folder: typeof folder_table.$inferSelect;
@@ -21,6 +33,10 @@ export function FolderList({ folder, parent }: FolderListProps) {
   const menuRef = useRef<HTMLDivElement>(null);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
+  const [renameFolderLoading, setRenameFolderLoading] = useState(false);
+  const [folderName, setFolderName] = useState(folder.name);
 
   const [isNavigating, setIsNavigating] = useState(false);
   const navigate = useRouter();
@@ -82,6 +98,29 @@ export function FolderList({ folder, parent }: FolderListProps) {
     });
   };
 
+  const handleRenameFolder = async () => {
+    setRenameFolderLoading(true);
+    const createFolderPromise = async () => {
+      try {
+        await renameFolderAction(folderName, Number(folder.id));
+        setFolderName("");
+        setIsModalOpen(false);
+
+        return `Renamed Folder "${folder.name}" to "${folderName}" successfully`;
+      } catch (e) {
+        throw new Error(getErrorMessage(e));
+      }
+    };
+    setIsRenameModalOpen(false);
+    setRenameFolderLoading(false);
+    navigate.refresh();
+    await toast.promise(createFolderPromise, {
+      loading: `Renaming Folder "${folder.name}" to "${folderName}"`,
+      success: (message) => message,
+      error: (error) => getErrorMessage(error),
+    });
+  };
+
   return (
     <>
       {isModalOpen && (
@@ -94,6 +133,47 @@ export function FolderList({ folder, parent }: FolderListProps) {
           title={`Move "${folder.name}" to: ${parent.name}`}
           parentId={folder.parentId}
         />
+      )}
+
+      {isRenameModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div
+            className="fixed inset-0 bg-black opacity-50"
+            onClick={() => setIsModalOpen(false)}
+          ></div>
+          <div className="relative z-50 w-96 rounded-lg bg-neutral-900 p-6 shadow-lg">
+            <button
+              onClick={() => setIsRenameModalOpen(false)}
+              className="absolute right-4 top-4 text-gray-500 hover:text-gray-700"
+            >
+              <X className="h-5 w-5" />
+            </button>
+            <h2 className="mb-4 text-lg font-semibold">Create New Folder</h2>
+            <input
+              type="text"
+              value={folderName}
+              onChange={(e) => setFolderName(e.target.value)}
+              placeholder="Enter folder name"
+              autoFocus
+              onKeyDown={async (e) => {
+                if (e.key === "Enter") {
+                  await handleRenameFolder();
+                }
+              }}
+              className="mb-4 w-full rounded-md border border-gray-300 p-2 text-black focus:border-blue-500 focus:outline-none"
+            />
+            {renameFolderLoading ? (
+              <CustomLoader />
+            ) : (
+              <button
+                onClick={handleRenameFolder}
+                className="w-full rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+              >
+                {"Create Folder"}
+              </button>
+            )}
+          </div>
+        </div>
       )}
       <div
         key={folder.id}
@@ -135,6 +215,16 @@ export function FolderList({ folder, parent }: FolderListProps) {
                 </div>
               ) : (
                 <>
+                  <button
+                    onClick={() => {
+                      setIsRenameModalOpen(true);
+                      setShowMenu(false);
+                    }}
+                    className="flex w-full items-center px-4 py-2 text-sm text-gray-200 hover:bg-gray-600"
+                  >
+                    <Edit className="mr-2 h-4 w-4" />
+                    Rename
+                  </button>
                   <button
                     onClick={() => {
                       setIsModalOpen(true);

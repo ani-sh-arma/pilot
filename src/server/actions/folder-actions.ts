@@ -29,6 +29,28 @@ export async function createFolderAction(folderName: string, parentId: number) {
   }
 }
 
+export async function renameFolderAction(folderName: string, folderId: number) {
+  try {
+    const user = await auth();
+    if (!user.userId) throw new AppError("Unauthorized");
+
+    const folder = await Queries.getFolderById(BigInt(folderId));
+
+    if (!folder) throw new AppError("Invalid folder id");
+
+    if (folder[0]?.ownerId !== user.userId) throw new AppError("Unauthorized");
+
+    await Mutations.renameFolder({
+      folder: {
+        name: folderName,
+        folderId: BigInt(folderId),
+      },
+    });
+  } catch (error) {
+    throw new AppError(getErrorMessage(error));
+  }
+}
+
 export async function deleteFolderAction(folderId: bigint) {
   try {
     const user = await auth();

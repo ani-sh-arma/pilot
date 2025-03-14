@@ -17,5 +17,6 @@
 - [x] Download file
 - [x] Download as PDF
 - [x] Toasts for errors and UI updates and notifications
+- [x] Folder rename.
 - [ ] Add text file creation and updation.
 - [ ] File view page
