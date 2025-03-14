@@ -142,7 +142,7 @@ export function FileList({ file, parent }: FileListProps) {
         );
 
         if (base64Pdf.startsWith("https://")) {
-          handleDownload();
+          await handleDownload();
           return;
         }
 
