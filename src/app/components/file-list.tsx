@@ -37,6 +37,8 @@ export function FileList({ file, parent }: FileListProps) {
 
   const navigate = useRouter();
 
+  const fileType = file.name?.split(".")[file.name?.split(".").length - 1];
+
   console.log(`File Size : ${file.size}`);
 
   let fileSize = parseInt(file.size ?? "0");
@@ -133,8 +135,6 @@ export function FileList({ file, parent }: FileListProps) {
 
     const downloadAsPdfPromise = (async () => {
       try {
-        const fileType =
-          file.name?.split(".")[file.name?.split(".").length - 1];
         setIsDeleting(true);
         const base64Pdf = await convertToPdfAction(
           file.url ?? "",
@@ -256,13 +256,15 @@ export function FileList({ file, parent }: FileListProps) {
                     <Download className="mr-2 h-4 w-4" />
                     Download
                   </button>
-                  <button
-                    className="flex w-full items-center px-4 py-2 text-sm text-gray-200 hover:bg-gray-600"
-                    onClick={handleDownloadAsPdf}
-                  >
-                    <Download className="mr-2 h-4 w-4" />
-                    Download as PDF
-                  </button>
+                  {fileType !== "pdf" && fileType !== "PDF" && (
+                    <button
+                      className="flex w-full items-center px-4 py-2 text-sm text-gray-200 hover:bg-gray-600"
+                      onClick={handleDownloadAsPdf}
+                    >
+                      <Download className="mr-2 h-4 w-4" />
+                      Download as PDF
+                    </button>
+                  )}
                   <button
                     onClick={() => {
                       setIsModalOpen(true);
