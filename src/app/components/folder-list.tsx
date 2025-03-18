@@ -107,6 +107,7 @@ export function FolderList({ folder, parent }: FolderListProps) {
         await renameFolderAction(folderName, Number(folder.id));
         setFolderName(folderName);
         setIsModalOpen(false);
+        navigate.refresh();
 
         return `Renamed Folder "${folder.name}" to "${folderName}" successfully`;
       } catch (e) {
@@ -115,7 +116,6 @@ export function FolderList({ folder, parent }: FolderListProps) {
     };
     setIsRenameModalOpen(false);
     setRenameFolderLoading(false);
-    navigate.refresh();
     await toast.promise(createFolderPromise, {
       loading: `Renaming Folder "${folder.name}" to "${folderName}"`,
       success: (message) => message,
