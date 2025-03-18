@@ -20,4 +20,3 @@
 - [x] Folder rename.
 - [x] Fix download as pdf for files that are already pdfs
 - [ ] Add text file creation and updation.
-- [ ] File view page

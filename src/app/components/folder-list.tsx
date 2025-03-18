@@ -20,6 +20,7 @@ import { moveFolderToFolder } from "~/server/actions/move-actions";
 import toast from "react-hot-toast";
 import { getErrorMessage } from "~/lib/utils/error-handling";
 import CustomLoader from "./custom-loader";
+import { ConfirmationModal } from "./confirmation-modal";
 
 interface FolderListProps {
   folder: typeof folder_table.$inferSelect;
@@ -30,6 +31,7 @@ interface FolderListProps {
 export function FolderList({ folder, parent }: FolderListProps) {
   const [showMenu, setShowMenu] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [confirmDeletion, setConfirmDeletion] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -60,6 +62,7 @@ export function FolderList({ folder, parent }: FolderListProps) {
     const deletePromise = (async () => {
       try {
         setIsDeleting(true);
+        setConfirmDeletion(false);
         await deleteFolderAction(folder.id);
         navigate.refresh();
         return "Folder deleted successfully";
@@ -67,7 +70,6 @@ export function FolderList({ folder, parent }: FolderListProps) {
         throw new Error(getErrorMessage(error));
       } finally {
         setIsDeleting(false);
-        setShowMenu(false);
       }
     })();
 
@@ -103,7 +105,7 @@ export function FolderList({ folder, parent }: FolderListProps) {
     const createFolderPromise = async () => {
       try {
         await renameFolderAction(folderName, Number(folder.id));
-        setFolderName("");
+        setFolderName(folderName);
         setIsModalOpen(false);
 
         return `Renamed Folder "${folder.name}" to "${folderName}" successfully`;
@@ -132,6 +134,15 @@ export function FolderList({ folder, parent }: FolderListProps) {
           currentFileOrFolder={folder.name ?? ""}
           title={`Move "${folder.name}" to: ${parent.name}`}
           parentId={folder.parentId}
+        />
+      )}
+
+      {confirmDeletion && (
+        <ConfirmationModal
+          onClose={() => setConfirmDeletion(false)}
+          onConfirm={handleFolderDelete}
+          title={`Delete "${folder.name}" `}
+          subtitle={`All the files and folders inside ${folder.name} folder will be deleted as well. \n Are you sure you want to delete "${folder.name}" and all the files and folders inside it? `}
         />
       )}
 
@@ -237,7 +248,10 @@ export function FolderList({ folder, parent }: FolderListProps) {
                   </button>
                   <button
                     className="flex w-full items-center px-4 py-2 text-sm text-red-400 hover:bg-gray-600"
-                    onClick={handleFolderDelete}
+                    onClick={() => {
+                      setShowMenu(false);
+                      setConfirmDeletion(true);
+                    }}
                   >
                     <Trash className="mr-2 h-4 w-4" />
                     Delete

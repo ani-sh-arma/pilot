@@ -22,6 +22,7 @@ import { MoveModal } from "./move-modal";
 import { moveFileToFolder } from "~/server/actions/move-actions";
 import toast from "react-hot-toast";
 import { getErrorMessage } from "~/lib/utils/error-handling";
+import { ConfirmationModal } from "./confirmation-modal";
 
 interface FileListProps {
   file: typeof file_table.$inferSelect;
@@ -31,6 +32,7 @@ interface FileListProps {
 export function FileList({ file, parent }: FileListProps) {
   const [showMenu, setShowMenu] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [confirmDeletion, setConfirmDeletion] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -80,6 +82,7 @@ export function FileList({ file, parent }: FileListProps) {
     const deletePromise = (async () => {
       try {
         setIsDeleting(true);
+        setConfirmDeletion(false);
         await deleteFileAction(file.id, file.fileKey ?? "");
         navigate.refresh();
         return "File deleted successfully";
@@ -87,7 +90,6 @@ export function FileList({ file, parent }: FileListProps) {
         throw new Error(getErrorMessage(error));
       } finally {
         setIsDeleting(false);
-        setShowMenu(false);
       }
     })();
 
@@ -212,6 +214,14 @@ export function FileList({ file, parent }: FileListProps) {
           parentId={file.parentId}
         />
       )}
+      {confirmDeletion && (
+        <ConfirmationModal
+          onClose={() => setConfirmDeletion(false)}
+          onConfirm={handleDelete}
+          title={`Delete "${file.name}" `}
+          subtitle={`Are you sure you want to delete "${file.name}"?`}
+        />
+      )}
       <div
         key={file.id}
         className="relative flex items-center rounded-lg bg-gray-800 p-4 shadow-md transition-shadow hover:shadow-lg"
@@ -277,7 +287,10 @@ export function FileList({ file, parent }: FileListProps) {
                   </button>
                   <button
                     className="flex w-full items-center px-4 py-2 text-sm text-red-400 hover:bg-gray-600"
-                    onClick={handleDelete}
+                    onClick={() => {
+                      setShowMenu(false);
+                      setConfirmDeletion(true);
+                    }}
                   >
                     <Trash className="mr-2 h-4 w-4" />
                     Delete

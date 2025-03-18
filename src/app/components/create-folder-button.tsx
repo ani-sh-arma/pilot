@@ -19,10 +19,10 @@ export function CreateFolderButton(props: {
     setCreateFolderLoading(true);
     const createFolderPromise = async () => {
       try {
+        setIsModalOpen(false);
         await createFolderAction(folderName, props.parentId);
         props.onCreated();
         setFolderName("");
-        setIsModalOpen(false);
 
         return "Folder Created";
       } catch (e) {
