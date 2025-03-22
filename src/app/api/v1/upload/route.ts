@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { UTApi } from "uploadthing/server";
 import { Mutations } from "~/server/db/queries";
@@ -18,7 +18,10 @@ export async function POST(request: NextRequest) {
     const folderId = formData.get("folderId") as string;
 
     if (!file || !folderId) {
-      return NextResponse.json({ error: "File and folder ID are required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "File and folder ID are required" },
+        { status: 400 },
+      );
     }
 
     // Upload to UploadThing
@@ -30,7 +33,7 @@ export async function POST(request: NextRequest) {
 
     // Determine file type
     let type = "file";
-    const fileExt = file.name.split('.').pop()?.toLowerCase() || '';
+    const fileExt = file.name.split(".").pop()?.toLowerCase() ?? "";
 
     if (imageTypes.includes(fileExt)) type = "image";
     else if (videoTypes.includes(fileExt)) type = "video";
@@ -53,10 +56,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       url: uploadResult.data.url,
-      key: uploadResult.data.key
+      key: uploadResult.data.key,
     });
   } catch (error) {
     console.error("Error uploading file:", error);
-    return NextResponse.json({ error: "Failed to upload file" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to upload file" },
+      { status: 500 },
+    );
   }
 }

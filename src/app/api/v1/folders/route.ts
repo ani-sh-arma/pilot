@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { Queries } from "~/server/db/queries";
 import { createFolderAction, deleteFolderAction } from "~/server/actions/folder-actions";
@@ -17,7 +17,15 @@ export async function GET(request: NextRequest) {
     }
 
     const folders = await Queries.getFolders(BigInt(folderId));
-    return NextResponse.json({ folders });
+
+    // Convert BigInt values to strings
+    const serializedFolders = folders.map(folder => ({
+      ...folder,
+      id: folder.id.toString(),
+      parentId: folder.parentId?.toString()
+    }));
+
+    return NextResponse.json({ folders: serializedFolders });
   } catch (error) {
     console.error("Error fetching folders:", error);
     return NextResponse.json({ error: "Failed to fetch folders" }, { status: 500 });
@@ -32,12 +40,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { folderName, parentId } = await request.json();
-    if (!folderName || !parentId) {
+    const data = await request.json() as { folderName?: string; parentId?: string | number };
+    if (!data.folderName || !data.parentId) {
       return NextResponse.json({ error: "Folder name and parent ID are required" }, { status: 400 });
     }
 
-    await createFolderAction(folderName, Number(parentId));
+    await createFolderAction(data.folderName, Number(data.parentId));
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error creating folder:", error);
@@ -53,12 +61,12 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { folderId } = await request.json();
-    if (!folderId) {
+    const data = await request.json() as { folderId?: string };
+    if (!data.folderId) {
       return NextResponse.json({ error: "Folder ID is required" }, { status: 400 });
     }
 
-    await deleteFolderAction(BigInt(folderId));
+    await deleteFolderAction(BigInt(data.folderId));
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error deleting folder:", error);

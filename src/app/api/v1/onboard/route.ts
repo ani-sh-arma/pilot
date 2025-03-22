@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { Mutations, Queries } from "~/server/db/queries";
 
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
     const user = await auth();
     if (!user.userId) {

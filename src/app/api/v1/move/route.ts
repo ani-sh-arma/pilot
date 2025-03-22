@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { moveFileToFolder, moveFolderToFolder } from "~/server/actions/move-actions";
 
@@ -9,15 +9,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { type, itemId, newParentId } = await request.json();
-    if (!type || !itemId || !newParentId) {
+    const data = await request.json() as {
+      type?: "file" | "folder";
+      itemId?: string;
+      newParentId?: string
+    };
+
+    if (!data.type || !data.itemId || !data.newParentId) {
       return NextResponse.json({ error: "Type, item ID, and new parent ID are required" }, { status: 400 });
     }
 
-    if (type === "file") {
-      await moveFileToFolder(BigInt(itemId), BigInt(newParentId));
-    } else if (type === "folder") {
-      await moveFolderToFolder(BigInt(itemId), BigInt(newParentId));
+    if (data.type === "file") {
+      await moveFileToFolder(BigInt(data.itemId), BigInt(data.newParentId));
+    } else if (data.type === "folder") {
+      await moveFolderToFolder(BigInt(data.itemId), BigInt(data.newParentId));
     } else {
       return NextResponse.json({ error: "Invalid type" }, { status: 400 });
     }

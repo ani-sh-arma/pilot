@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { Queries } from "~/server/db/queries";
 import { deleteFileAction } from "~/server/actions/file-actions";
@@ -40,12 +40,12 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { fileId, fileKey } = await request.json();
-    if (!fileId) {
+    const data = await request.json() as { fileId?: string; fileKey?: string };
+    if (!data.fileId) {
       return NextResponse.json({ error: "File ID is required" }, { status: 400 });
     }
 
-    await deleteFileAction(BigInt(fileId), fileKey || "");
+    await deleteFileAction(BigInt(data.fileId), data.fileKey ?? "");
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error deleting file:", error);
