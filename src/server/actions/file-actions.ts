@@ -47,14 +47,20 @@ export async function convertToPdfAction(fileUrl: string, fileType: string) {
   const page = pdfDoc.addPage();
 
   if (fileType === "image") {
-    const image = await pdfDoc.embedJpg(data);
-    const { width, height } = page.getSize();
-    page.drawImage(image, {
-      x: 0,
-      y: 0,
-      width,
-      height,
-    });
+    const contentType = response.headers.get("content-type") || "";
+    let image;
+
+    if (contentType.includes("png")) {
+      image = await pdfDoc.embedPng(data);
+    } else if (contentType.includes("jpeg") || contentType.includes("jpg")) {
+      image = await pdfDoc.embedJpg(data);
+    } else {
+      try {
+        image = await pdfDoc.embedPng(data);
+      } catch {
+        image = await pdfDoc.embedJpg(data);
+      }
+    }
   } else if (fileType === "doc" || fileType === "text") {
     const text = new TextDecoder().decode(data);
     page.drawText(text, {

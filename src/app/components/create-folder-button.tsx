@@ -47,7 +47,7 @@ export function CreateFolderButton(props: {
           <Plus className="mr-2 h-5 w-5" />
           Create
         </button>
-        <p className="text-sm text-gray-600">New Folder</p>
+        <p className="mt-1 text-sm text-gray-600">New Folder</p>
       </div>
 
       {isModalOpen && (
