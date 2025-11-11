@@ -193,10 +193,12 @@ export function FolderList({ folder, parent }: FolderListProps) {
         <Link
           href={`/f/${folder.id}`}
           onClick={handleFolderClick}
-          className="flex flex-grow text-lg font-medium text-gray-100 hover:text-blue-400"
+          className="flex flex-grow items-center text-lg font-medium text-gray-100 hover:text-blue-400"
         >
-          <Folder className="h-6 w-6 text-yellow-400" />
-          <div className="ml-4 flex-grow">
+          <div className="w-10">
+            <Folder className="text-yellow-400" />
+          </div>
+          <div className="ml-4 flex-grow break-all">
             {isNavigating ? (
               <div className="flex items-center gap-2">
                 <Loader2 className="h-4 w-4 animate-spin" />

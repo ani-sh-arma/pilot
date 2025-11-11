@@ -11,16 +11,18 @@ export default async function OnBoarding() {
             Pilot
           </span>
         </div>
-        <h2 className="text-gray-500 text-sm">
+        <h2 className="text-sm text-gray-500">
           {"Store, share, and collaborate on files and folders."}
         </h2>
-        <h2 className="text-gray-500 text-lg mb-8">{"Sign in to get started."}</h2>
-        <button className="flex items-center rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-4 text-lg font-medium text-white transition-all duration-300 hover:from-blue-500 hover:to-indigo-500 hover:shadow-[0_0_25px_rgba(79,70,229,0.5)]">
+        <h2 className="mb-8 text-lg text-gray-500">
+          {"Sign in to get started."}
+        </h2>
+        <div className="flex items-center rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-4 text-lg font-medium text-white transition-all duration-300 hover:from-blue-500 hover:to-indigo-500 hover:shadow-[0_0_25px_rgba(79,70,229,0.5)]">
           <SignInButton
             forceRedirectUrl={"/pilot"}
             signUpForceRedirectUrl={"/pilot"}
           />
-        </button>
+        </div>
       </div>
     </div>
   );

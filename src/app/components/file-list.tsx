@@ -66,15 +66,17 @@ export function FileList({ file, parent }: FileListProps) {
   const getIcon = (type: string) => {
     switch (type) {
       case "doc":
-        return <FileText className="h-6 w-6 text-blue-400" />;
+        return <FileText className="text-blue-400" />;
       case "image":
-        return <Image className="h-6 w-6 text-green-400" />;
+        return (
+          <Image aria-label="Image file icon" className="text-green-400" />
+        );
       case "video":
-        return <Video className="h-6 w-6 text-red-400" />;
+        return <Video className="text-red-400" />;
       case "audio":
-        return <Music className="h-6 w-6 text-purple-400" />;
+        return <Music className="text-purple-400" />;
       default:
-        return <File className="h-6 w-6 text-gray-400" />;
+        return <File className="text-gray-400" />;
     }
   };
 
@@ -226,18 +228,18 @@ export function FileList({ file, parent }: FileListProps) {
         key={file.id}
         className="relative flex items-center rounded-lg bg-gray-800 p-4 shadow-md transition-shadow hover:shadow-lg"
       >
-        {getIcon(file.type ?? "file")}
+        <div className="w-10">{getIcon(file.type ?? "file")}</div>
         <div className="ml-4 flex-grow">
           <a
             href={file.url ?? ""}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-md font-medium text-gray-100 hover:text-blue-400"
+            className="text-md break-all font-medium text-gray-100 hover:text-blue-400"
           >
             {file.name}
           </a>
         </div>
-        <p className="text-sm text-gray-400">{`${fileSize.toFixed(2)} ${sizeUnit}`}</p>
+        <p className="pl-4 text-sm text-gray-400">{`${fileSize.toFixed(2)} ${sizeUnit}`}</p>
         <div className="relative" ref={menuRef}>
           <button
             className="ml-4 p-1 hover:text-gray-300"
