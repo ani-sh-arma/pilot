@@ -47,7 +47,7 @@ export async function convertToPdfAction(fileUrl: string, fileType: string) {
   const page = pdfDoc.addPage();
 
   if (fileType === "image") {
-    const contentType = response.headers.get("content-type") || "";
+    const contentType = response.headers.get("content-type") ?? "";
     let image;
 
     if (contentType.includes("png")) {
