@@ -41,8 +41,6 @@ export function FileList({ file, parent }: FileListProps) {
 
   const fileType = file.name?.split(".")[file.name?.split(".").length - 1];
 
-  console.log(`File Size : ${file.size}`);
-
   let fileSize = parseInt(file.size ?? "0");
   let sizeUnit = "B";
   if (fileSize > 1024 && fileSize < 1024 * 1024) {

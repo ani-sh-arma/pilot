@@ -19,7 +19,9 @@ const conn =
     password: env.SINGLESTORE_PASS,
     database: env.SINGLESTORE_DB_NAME,
     ssl: {},
-    maxIdle: 0,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0,
   });
 if (env.NODE_ENV !== "production") globalForDb.conn = conn;
 

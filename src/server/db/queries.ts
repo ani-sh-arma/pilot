@@ -7,12 +7,21 @@ import {
 import { and, eq, inArray, isNull } from "drizzle-orm";
 
 export const Queries = {
-  getAllParentsForFolder: async function (folderId: bigint) {
+  getAllParentsForFolder: async function (
+    folderId: bigint,
+    prefetched?: typeof folderSchema.$inferSelect,
+  ) {
     const parents = [];
     let currentId: bigint | null = folderId;
+
+    if (prefetched && prefetched.id === folderId) {
+      parents.unshift(prefetched);
+      currentId = prefetched.parentId;
+    }
+
     while (currentId !== null) {
       const folder = await db
-        .selectDistinct()
+        .select()
         .from(folderSchema)
         .where(eq(folderSchema.id, currentId));
 
@@ -43,13 +52,13 @@ export const Queries = {
   },
   getFolderById: function (folderId: bigint) {
     return db
-      .selectDistinct()
+      .select()
       .from(folderSchema)
       .where(eq(folderSchema.id, folderId));
   },
   getRootFolderForUser: async function (userId: string) {
     const folder = await db
-      .selectDistinct()
+      .select()
       .from(folderSchema)
       .where(
         and(eq(folderSchema.ownerId, userId), isNull(folderSchema.parentId)),

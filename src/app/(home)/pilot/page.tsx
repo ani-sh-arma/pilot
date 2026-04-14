@@ -2,7 +2,6 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { Queries } from "~/server/db/queries";
 import { Cloud } from "lucide-react";
-import { LoadingUI } from "./loading-ui";
 import { createHomeVault } from "~/server/actions/actions";
 
 export default async function OnBoarding() {
@@ -32,5 +31,5 @@ export default async function OnBoarding() {
     );
   }
 
-  return <LoadingUI rootId={root.id.toString()} />;
+  return redirect(`/f/${root.id}`);
 }
