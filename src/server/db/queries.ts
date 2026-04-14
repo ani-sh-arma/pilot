@@ -13,7 +13,7 @@ export const Queries = {
   ) {
     // We build the ancestry list by repeatedly prepending (unshift) each
     // ancestor so the final array is ordered [root, ..., currentFolder].
-    const parents = [];
+    const parents: (typeof folderSchema.$inferSelect)[] = [];
     let currentId: bigint | null = folderId;
 
     if (prefetched && prefetched.id === folderId) {
