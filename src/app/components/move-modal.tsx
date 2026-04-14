@@ -99,12 +99,16 @@ export function MoveModal({
                 try {
                   const folder = await getFolderByIdAction(selectedFolderId);
                   const parentId = folder[0]?.parentId ?? null;
-                  void loadFolders(parentId);
                   if (parentId !== null) {
-                    const parentFolder = await getFolderByIdAction(parentId);
+                    const [, parentFolder] = await Promise.all([
+                      loadFolders(parentId),
+                      getFolderByIdAction(parentId),
+                    ]);
                     setDialogueTitle(
                       `Move "${currentFileOrFolder}" to : ${parentFolder[0]?.name}`,
                     );
+                  } else {
+                    await loadFolders(parentId);
                   }
                 } catch (e) {
                   console.log(`Error: ${getErrorMessage(e)}`);
