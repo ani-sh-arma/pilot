@@ -21,7 +21,7 @@ const conn =
     ssl: {},
     waitForConnections: true,
     connectionLimit: 10,
-    queueLimit: 0,
+    queueLimit: 100,
   });
 if (env.NODE_ENV !== "production") globalForDb.conn = conn;
 
