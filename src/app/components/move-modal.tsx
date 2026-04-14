@@ -43,6 +43,8 @@ export function MoveModal({
         return;
       }
 
+      setShowBack(true);
+
       try {
         const result = await getAllFolders(folderId ?? BigInt(0));
 
