@@ -43,12 +43,12 @@ export function MoveModal({
         return;
       }
 
-      console.log(`Fetching folders for folderId: ${folderId}`);
+      setShowBack(true);
 
       try {
         const result = await getAllFolders(folderId ?? BigInt(0));
 
-        const filteredFolders = result[0].filter(
+        const filteredFolders = result.filter(
           (folder) => folder.id !== currentFolderId,
         );
 
@@ -73,7 +73,6 @@ export function MoveModal({
   const handleFolderClick = (folder: typeof folder_table.$inferSelect) => {
     if (folder.id === currentFolderId) return;
 
-    console.log(`Navigating to folder: ${folder.id}`);
     setSelectedFolderId(folder.id);
     void loadFolders(folder.id);
     setDialogueTitle(`Move "${currentFileOrFolder}" to : ${folder.name}`);
@@ -100,16 +99,19 @@ export function MoveModal({
               className="w-8 rounded-full p-1 hover:cursor-pointer hover:bg-slate-500 hover:text-black"
               onClick={async () => {
                 try {
-                  console.log("Loading folders for current folder");
                   const folder = await getFolderByIdAction(selectedFolderId);
-                  console.log("Folder:", folder[0]?.parentId);
-                  void loadFolders(folder[0]?.parentId ?? null);
-                  const parentFolder = await getFolderByIdAction(
-                    folder[0]?.parentId ?? BigInt(0),
-                  );
-                  setDialogueTitle(
-                    `Move "${currentFileOrFolder}" to : ${parentFolder[0]?.name}`,
-                  );
+                  const parentId = folder[0]?.parentId ?? null;
+                  if (parentId !== null) {
+                    const [, parentFolder] = await Promise.all([
+                      loadFolders(parentId),
+                      getFolderByIdAction(parentId),
+                    ]);
+                    setDialogueTitle(
+                      `Move "${currentFileOrFolder}" to : ${parentFolder[0]?.name}`,
+                    );
+                  } else {
+                    await loadFolders(parentId);
+                  }
                 } catch (e) {
                   console.log(`Error: ${getErrorMessage(e)}`);
                 }

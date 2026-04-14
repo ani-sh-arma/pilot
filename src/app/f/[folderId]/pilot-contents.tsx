@@ -1,7 +1,7 @@
 "use client";
 
 import type { file_table, folder_table } from "~/server/db/schema";
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+import { SignInButton, UserButton, useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import { Breadcrumb } from "~/app/components/breadcrumb";
@@ -23,6 +23,7 @@ export default function PilotContents(props: {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const navigate = useRouter();
+  const { isSignedIn } = useAuth();
 
   // Handle clicks outside the mobile menu to close it
   useEffect(() => {
@@ -61,12 +62,7 @@ export default function PilotContents(props: {
             >
               <MoreVertical className="h-6 w-6" />
             </button>
-            <SignedOut>
-              <SignInButton />
-            </SignedOut>
-            <SignedIn>
-              <UserButton />
-            </SignedIn>
+            {!isSignedIn ? <SignInButton /> : <UserButton />}
 
             {/* Mobile dropdown menu */}
             {showMobileMenu && (
@@ -123,12 +119,7 @@ export default function PilotContents(props: {
                 }}
               />
             </div>
-            <SignedOut>
-              <SignInButton />
-            </SignedOut>
-            <SignedIn>
-              <UserButton />
-            </SignedIn>
+            {!isSignedIn ? <SignInButton /> : <UserButton />}
           </div>
         </div>
 
